@@ -1,0 +1,61 @@
+1.	House cleaning before getting start
+	a)	Make sure the Vitis 2019.2 release installed
+	b)	Make sure the Petalinux 2019.2 release installed
+	c)	Download the VCK190 Petalinux BSP files
+	d)	Make sure your VCK190 board ethernet cable and USB connection are working
+
+2.	Modify files according to your environment
+	$vi gen_pdi/Makefile  
+	Modify the variable PETALNX_BSP to your location of VCK190 BSP file
+
+	$vi src_app/Makefile
+	Modify the variable BOARD_IP to your VCK190 linux IP address
+
+3.	Choose the target you want to run
+	a)	launch Co-simulation
+	$cd gen_pdi
+	$make cosim
+	
+	b)	Generate FPGA bitstream and AIE binary
+	$cd gen_pdi
+	$make pdi
+	
+	c)	Generate Petalinux image and test application
+	$cd gen_pdi
+	$make images
+
+4. Run the test on VCK190 board
+	a)	Generate Petalinux images and test application as above
+	
+	b)	Launch Vivado to download PDI
+	$vivado
+	Open hardware manager
+	Select images/design_1_aie.pdi and images/debug_nets.ltx
+	Setup ILAs
+	
+	c)  Download ATF, device tree, u-boot and linux image
+	$cd images
+	$xsdb 
+	
+	d)	Open putty to connect uart and set rate 115200, and type following command on putty
+	Versal>bootm 0x10000000 
+
+
+	e)	Login linux with username:root/passwd:root
+
+	f)	Set IP on VCK190 board 
+	$ifconfig eth0 192.168.1.188
+
+
+5. Upload linux test application to VCK190 board
+	$cd src_app
+	$make all
+	This will upload binary and data to VCK190 board. Make sure the ethernet connect between your workstation and VCK190 boar is working. 
+
+6.	Launch testing program on VCK190 board through UART
+	$/home/root/bf_ifft_test.exe
+
+
+Log:
+1.3.1
+	Fiex the cosimulation data incorrect issues
