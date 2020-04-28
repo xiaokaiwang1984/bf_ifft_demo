@@ -103,7 +103,7 @@ images: design_1_aie.pdi ./vck190_petalnx ../src_a72/main.elf lnx_app
 	cp ./vck190_petalnx/images/linux/system.dtb  ../images
 	cp ./vck190_petalnx/images/linux/u-boot.elf  ../images
 	cp ./vck190_petalnx/images/linux/image.ub  ../images
-
+	cp ./vck190_petalnx/images/linux/bl31.elf  ../images
 	
 
 all:images 

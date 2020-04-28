@@ -92,23 +92,24 @@ wait_on_run synth_1
 launch_runs impl_1 -to_step write_device_image -jobs 16
 wait_on_run impl_1
 
-#open_run impl_1
-#write_hw_platform -fixed -force  -include_bit -file ./design_1_wrapper.xsa
+open_run impl_1
+write_hw_platform -fixed -force  -include_bit -file ./design_1_impl.xsa
+
+cp ./${project}/${project}.runs/impl_1/design_1_wrapper.ltx ./
+cp ./${project}/${project}.runs/impl_1/design_1_wrapper.pdi ./
+
+
+
+
 
 #2019.2_siea
-open_checkpoint ./${project}/${project}.runs/impl_1/design_1_wrapper_postroute_physopt.dcp
-set_property bitstream.general.compress zip [current_design]
-set_property bitstream.general.npiDmaMode Yes [current_design]
-write_device_image -force -raw_partitions -file design_1.pdi
-write_debug_probes -force debug_nets.ltx
+#open_checkpoint ./${project}/${project}.runs/impl_1/design_1_wrapper_postroute_physopt.dcp
+#set_property bitstream.general.compress zip [current_design]
+#set_property bitstream.general.npiDmaMode Yes [current_design]
+#write_device_image -force -raw_partitions -file design_1.pdi
+#write_debug_probes -force debug_nets.ltx
 
-#----------------------------------------------------------------------------------------
-# Write DSA steps!!
-#set_param dsa.includeMEContent true
-#set_property dsa.name design_1 [current_project]
-#set_property dsa.board_id EvalDemoFlow2 [current_project]
-#write_dsa -fixed -force ./design_1.dsa
-#validate_dsa ./design_1.dsa
+
 
 
 
