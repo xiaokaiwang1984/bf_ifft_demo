@@ -68,8 +68,8 @@ design_1_aie.pdi:design_1.pdi
 	cd ./Work/ps/cdo; \
 	./generateAIEConfig -e
 	bootgen -arch versal -image ./design_1_aie.pdi.bif -w -o ./design_1_aie.pdi
-	cp design_1_aie.pdi ../images
-	cp debug_nets.ltx ../images
+	#cp design_1_aie.pdi ../images
+	#cp design_1.ltx ../images
 
 pdi:design_1_aie.pdi
 
@@ -89,14 +89,16 @@ hw.pdi:design_1.pdi ../src_a72/main.elf ./Work/aiearchive.aieprj
 	-boot-mode qspi \
 	-name hw.pdi
 	
-./vck190_petalnx:./bf_ifft_plat
+./vck190_petalnx:design_1.pdi
 	petalinux-create -t project -s ${PETALNX_BSP} -n vck190_petalnx
-	petalinux-config -p ./vck190_petalnx --get-hw-description=. --silentconfig
+	petalinux-config -p ./vck190_petalnx --get-hw-description=./ --silentconfig
 	cp ./scripts/system-user.dtsi ./vck190_petalnx/project-spec/meta-user/recipes-bsp/device-tree/files/system-user.dtsi
 	cd vck190_petalnx;petalinux-build
+	cd vck190_petalnx;petalinux-package --boot --u-boot --force
+	
 
 lnx_app:./bf_ifft_plat
-	cd ../src_app;make all
+	make all -C ../src_app
 	
 images: design_1_aie.pdi ./vck190_petalnx ../src_a72/main.elf lnx_app
 	cp ./scripts/xsdb* ../images

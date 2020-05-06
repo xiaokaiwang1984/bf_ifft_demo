@@ -95,8 +95,12 @@ wait_on_run impl_1
 open_run impl_1
 write_hw_platform -fixed -force  -include_bit -file ./design_1_impl.xsa
 
-cp ./${project}/${project}.runs/impl_1/design_1_wrapper.ltx ./
-cp ./${project}/${project}.runs/impl_1/design_1_wrapper.pdi ./
+exec cp ./${project}/${project}.runs/impl_1/design_1_wrapper.ltx ./design_1.ltx 
+exec cp ./${project}/${project}.runs/impl_1/design_1_wrapper.pdi ./design_1.pdi 
+exec cp ./${project}/${project}.runs/impl_1/design_1_wrapper.pdi.bif ./design_1.pdi.bif
+exec cp ./${project}/${project}.runs/impl_1/design_1_wrapper.rcfi ./
+exec cp ./${project}/${project}.runs/impl_1/design_1_wrapper.rnpi ./
+exec cp ./${project}/${project}.runs/impl_1/design_1_wrapper.rcdo ./
 
 
 
