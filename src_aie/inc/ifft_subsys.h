@@ -100,10 +100,10 @@ public:
 		location<buffer>(kifftd.ifft.out[0]) =  location<buffer>(kifftd.ifft.in[0]);
 		
 		
-		location<buffer>(kiffta.ifft_lut2)   =  location<buffer>(kiffta.ifft_lut1);
-		location<buffer>(kifftb.ifft_lut2)   =  location<buffer>(kifftb.ifft_lut1);
-		location<buffer>(kifftc.ifft_lut2)   =  location<buffer>(kifftc.ifft_lut1);
-		location<buffer>(kifftd.ifft_lut2)   =  location<buffer>(kifftd.ifft_lut1);
+		location<parameter>(kiffta.ifft_lut2)   =  location<parameter>(kiffta.ifft_lut1);
+		location<parameter>(kifftb.ifft_lut2)   =  location<parameter>(kifftb.ifft_lut1);
+		location<parameter>(kifftc.ifft_lut2)   =  location<parameter>(kifftc.ifft_lut1);
+		location<parameter>(kifftd.ifft_lut2)   =  location<parameter>(kifftd.ifft_lut1);
 		
 		
 		//------------- location constraints -------------------
@@ -117,32 +117,32 @@ public:
                                                        
 		location<kernel>(kiffta.ifft)        =  tile(xoff+(yoff&1), yoff);
 		location<stack> (kiffta.ifft)        =  bank(xoff+(yoff&1), yoff, 2);
-		location<buffer>(kiffta.ifft_lut1)   =  bank(xoff+(yoff&1), yoff, 2);
-		location<buffer>(kiffta.ifft_buf1)   =  bank(xoff+(yoff&1), yoff, 0);
-		location<buffer>(kiffta.ifft_buf2)   =  bank(xoff+(yoff&1), yoff, 1);
+		location<parameter>(kiffta.ifft_lut1)   =  bank(xoff+(yoff&1), yoff, 2);
+		location<parameter>(kiffta.ifft_buf1)   =  bank(xoff+(yoff&1), yoff, 0);
+		location<parameter>(kiffta.ifft_buf2)   =  bank(xoff+(yoff&1), yoff, 1);
 		//location<buffer>(kiffta.ifft.in[0])  = {bank(xoff+(yoff&1), yoff+1, 0),  bank(xoff+(yoff&1), yoff+1, 1)};
 		location<buffer>(kiffta.ifft.out[0]) = {bank(xoff+(yoff&1), yoff+1, 0),  bank(xoff+(yoff&1), yoff+1, 1)};
 		
         //
 		location<kernel>(kifftb.ifft)        =  tile(xoff+(yoff&1), yoff+2);
 		location<stack> (kifftb.ifft)        =  bank(xoff+(yoff&1), yoff+2, 2);
-		location<buffer>(kifftb.ifft_lut1)   =  bank(xoff+(yoff&1), yoff+2, 2);
-		location<buffer>(kifftb.ifft_buf1)   =  bank(xoff+(yoff&1), yoff+1, 2);
-		location<buffer>(kifftb.ifft_buf2)   =  bank(xoff+(yoff&1), yoff+1, 3);
+		location<parameter>(kifftb.ifft_lut1)   =  bank(xoff+(yoff&1), yoff+2, 2);
+		location<parameter>(kifftb.ifft_buf1)   =  bank(xoff+(yoff&1), yoff+1, 2);
+		location<parameter>(kifftb.ifft_buf2)   =  bank(xoff+(yoff&1), yoff+1, 3);
 		location<buffer>(kifftb.ifft.in[0])  = {bank(xoff+(yoff&1), yoff+2, 0),  bank(xoff+(yoff&1), yoff+2,  1)};
 		//
 		location<kernel>(kifftc.ifft)        =  tile(xoff+1-(yoff&1),  yoff);
 		location<stack> (kifftc.ifft)        =  bank(xoff+1-(yoff&1),  yoff, 2);
-		location<buffer>(kifftc.ifft_lut1)   =  bank(xoff+1-(yoff&1),  yoff, 2);
-		location<buffer>(kifftc.ifft_buf1)   =  bank(xoff+1-(yoff&1),  yoff, 0);
-		location<buffer>(kifftc.ifft_buf2)   =  bank(xoff+1-(yoff&1),  yoff, 1);
+		location<parameter>(kifftc.ifft_lut1)   =  bank(xoff+1-(yoff&1),  yoff, 2);
+		location<parameter>(kifftc.ifft_buf1)   =  bank(xoff+1-(yoff&1),  yoff, 0);
+		location<parameter>(kifftc.ifft_buf2)   =  bank(xoff+1-(yoff&1),  yoff, 1);
 		location<buffer>(kifftc.ifft.in[0])  = {bank(xoff+1-(yoff&1),  yoff+1, 0),  bank(xoff+1-(yoff&1), yoff+1,  1)};
 		//
 		location<kernel>(kifftd.ifft)        =  tile(xoff+1-(yoff&1),  yoff+1);
 		location<stack> (kifftd.ifft)        =  bank(xoff+1-(yoff&1),  yoff, 3);
-		location<buffer>(kifftd.ifft_lut1)   =  bank(xoff+1-(yoff&1),  yoff, 3);
-		location<buffer>(kifftd.ifft_buf1)   =  bank(xoff+1-(yoff&1),  yoff+2, 0);
-		location<buffer>(kifftd.ifft_buf2)   =  bank(xoff+1-(yoff&1),  yoff+2, 1);
+		location<parameter>(kifftd.ifft_lut1)   =  bank(xoff+1-(yoff&1),  yoff, 3);
+		location<parameter>(kifftd.ifft_buf1)   =  bank(xoff+1-(yoff&1),  yoff+2, 0);
+		location<parameter>(kifftd.ifft_buf2)   =  bank(xoff+1-(yoff&1),  yoff+2, 1);
 		location<buffer>(kifftd.ifft.in[0])  = {bank(xoff+1-(yoff&1),  yoff+1, 2),  bank(xoff+1-(yoff&1), yoff+1, 3)};
 		
     };
