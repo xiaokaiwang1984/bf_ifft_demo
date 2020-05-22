@@ -1,2 +1,7 @@
 ./iprepo/bf_ifft_pl:
 	cd bf_ifft_pl;vivado -mode batch -source ./scripts/rtlpacker_v2.tcl
+
+clean:
+	rm -rf iprepo
+	rm -rf ./bf_ifft_pl/vivado.*
+	rm -rf ./bf_ifft_pl/rtlpackaging
