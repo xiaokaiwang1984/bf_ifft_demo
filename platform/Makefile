@@ -1,14 +1,16 @@
-.PHONY: clean hw 
+.PHONY: clean build
 
-all: ipgen hw 
+all: ipgen build 
 
 
-hw:
-	make all -C ./hw
+build:
+	make all -C ./build
 
 ipgen:
 	make all -C ../IPs
 	
 clean:
-	make clean -C ./hw
-	make clean -C ../IPs
+	make clean -C ./build
+	rm *.xpfm
+	rm -rf hw sw
+	

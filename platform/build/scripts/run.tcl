@@ -33,7 +33,7 @@ add_files -fileset constrs_1 -norecurse ./xdc/design_1_wrapper_debug.xdc
 
 make_wrapper -files [get_files ${proj_dir}/${project}/${project}.srcs/sources_1/bd/design_1/design_1.bd] -top
 add_files -norecurse ${proj_dir}/${project}/${project}.srcs/sources_1/bd/design_1/hdl/design_1_wrapper.v
-update_compile_order -fileset sim_1
+update_compile_order -fileset sources_1
 #----------------------------------------------------------------------------------------
 set_property platform.run.steps.place_design.tcl.post ./scripts/waive_BLI_AIE_timing_violations_postplace.tcl [current_project]
 
