@@ -11,7 +11,7 @@ set Part xcvc1902-vsva2197-1LP-e-es1
 
 create_project -force ${project} ${proj_dir}/${project} -part ${Part} 
 
-set_property  ip_repo_paths  {../../IPs/iprepo} [current_project]
+set_property  ip_repo_paths  {../IPs/iprepo} [current_project]
 update_ip_catalog
 
 #------------------------------------------------------------------------------------

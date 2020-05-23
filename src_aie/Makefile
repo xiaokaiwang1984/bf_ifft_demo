@@ -9,5 +9,5 @@ compile:
 	
 clean:
 	rm -rf Work xnwOut
-	rm NOC_Power.xpe
+	rm NOC_Power.xpe libsdf.a xcd.log
 	
