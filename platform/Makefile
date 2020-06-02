@@ -1,26 +1,17 @@
-.PHONY: clean build
+.PHONY: clean build xsa output
 
-all:xsa output
+all:bf_ifft_v1_0.xpfm
 
 
-xsa:
-	vivado -mode batch -source ./scripts/run.tcl
-	
-hw_only:xsa
-	cp design_1.xsa ../hw
-	
+hw/design_1.xsa:
+	make -C hw
 
-output:
-	xsct -nodisp -sdx ./scripts/plat_gen.tcl bf_ifft_v1_0 ./design_1.xsa output
-	cp -r output/bf_ifft_v1_0/export/bf_ifft_v1_0/hw ./
+bf_ifft_v1_0.xpfm: hw/design_1.xsa
+	xsct -nodisp -sdx ./scripts/plat_gen.tcl bf_ifft_v1_0 ./hw/design_1.xsa output
 	cp -r output/bf_ifft_v1_0/export/bf_ifft_v1_0/sw ./
 	cp -r output/bf_ifft_v1_0/export/bf_ifft_v1_0/bf_ifft_v1_0.xpfm ./
-	
+
 clean:
-	rm -rf vivado*
-	rm -rf .Xil
-	rm -rf NOC_Power.xpe design_1.xsa bf_ifft_plat
-	rm -rf output
-	rm *.xpfm
-	rm -rf hw sw
-	
+	make -C hw clean
+	rm -rf output *.xpfm sw
+
