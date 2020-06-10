@@ -12,7 +12,7 @@ aie:
 	make -C src_aie	
 	
 barem:
-	amke -C src_barem
+	make -C src_barem
 
 hw_emu:
 	make -C hw_emu
