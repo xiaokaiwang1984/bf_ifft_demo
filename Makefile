@@ -1,6 +1,6 @@
 .PHONY: clean IPs platform aie hw_emu
 
-all:IPs platform aie src_barem hw_emu
+all:IPs platform aie barem hw_emu
 
 IPs:
 	make -C IPs

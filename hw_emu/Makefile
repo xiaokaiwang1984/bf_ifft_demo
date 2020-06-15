@@ -6,7 +6,7 @@ IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 
 
 
-.PHONY:clea
+.PHONY:clean
 
 all:sim
 
@@ -19,8 +19,7 @@ sim:bf_ifft.xclbin
 	
 
 clean:
-	rm *.xclbin
 	rm *.xclbin.*
-	rm *.log BOOT* *.xsa 
+	rm *.log BOOT* *.xsa *.bin
 	rm -rf _x sd_card sim
 

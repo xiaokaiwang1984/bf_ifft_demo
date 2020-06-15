@@ -19,18 +19,21 @@ source ./bd_platform.tcl
 source ./pfm.tcl
 
 #----------------------------------------------------------------------------------------
-import_files -fileset constrs_1 -norecurse ./xdc/vck190_loc.xdc
-import_files -fileset constrs_1 -norecurse ./xdc/ddr.xdc
-import_files -fileset constrs_1 -norecurse ./xdc/timing.xdc
-import_files -fileset constrs_1 -norecurse ./xdc/aieshim_loc_constraints_mod.xdc
-import_files -fileset constrs_1 -norecurse ./xdc/design_1_wrapper_debug.xdc
+add_files -fileset constrs_1 -norecurse ./xdc/vck190_loc.xdc
+add_files -fileset constrs_1 -norecurse ./xdc/ddr.xdc
+add_files -fileset constrs_1 -norecurse ./xdc/timing.xdc
+add_files -fileset constrs_1 -norecurse ./xdc/aieshim_loc_constraints_mod.xdc
+add_files -fileset constrs_1 -norecurse ./xdc/design_1_wrapper_debug.xdc
 
 make_wrapper -files [get_files ${proj_dir}/${project}/${project}.srcs/sources_1/bd/design_1/design_1.bd] -top
 add_files -norecurse ${proj_dir}/${project}/${project}.srcs/sources_1/bd/design_1/hdl/design_1_wrapper.v
 update_compile_order -fileset sources_1
 update_compile_order -fileset constrs_1
 #----------------------------------------------------------------------------------------
-set_property platform.run.steps.place_design.tcl.post ./waive_BLI_AIE_timing_violations_postplace.tcl [current_project]
+
+import_files -fileset utils_1 -norecurse ./waive_BLI_AIE_timing_violations_postplace.tcl
+
+set_property platform.run.steps.place_design.tcl.post [get_files waive_BLI_AIE_timing_violations_postplace.tcl] [current_project]
 
 #examples
 #set_property platform.run.steps.place_design.tcl.post [get_files post_place.tcl] [current_project]
@@ -61,5 +64,5 @@ import_files
 generate_target all [get_files ${proj_dir}/${project}/${project}.srcs/sources_1/bd/design_1/design_1.bd]
 
 write_hw_platform -force ./design_1.xsa
-validate_hw_platform ./design_1.xsa -verbose
+
 
