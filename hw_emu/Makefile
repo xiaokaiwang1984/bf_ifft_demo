@@ -11,7 +11,8 @@ IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 all:sim
 
 bf_ifft.xclbin:
-	v++ -l --platform ../platform/bf_ifft_v1_0.xpfm ../src_aie/Work/temp/test_dl8a.o -t hw_emu --config ./system.cfg -g -o bf_ifft.xclbin
+	v++ -l --user_ip_repo_paths ../IPs/iprepo --save-temps --platform ../platform/bf_ifft_v1_0.xpfm ../src_aie/libsdf.a -t hw_emu --config ./system.cfg -g -o bf_ifft.xclbin
+
 	
 sim:bf_ifft.xclbin
 	v++ -p -t hw_emu -f ../platform/bf_ifft_v1_0.xpfm --package.rootfs=${ROOTFS} --package.image_format=ext4 --package.boot_mode=sd --package.kernel_image=${IMAGE} --package.sd_file ../src_barem/main.elf bf_ifft.xclbin ../src_aie/libsdf.a
@@ -19,7 +20,5 @@ sim:bf_ifft.xclbin
 	
 
 clean:
-	rm *.xclbin.*
-	rm *.log BOOT* *.xsa *.bin
-	rm -rf _x sd_card sim
+	rm -rf *xclbin* *.log BOOT* *.xsa *.bin _x sd_card sim emu_qemu_scripts ipcache libsdf boot_* launch* qemu_* hw.* pmc_* sd_* v++*
 
