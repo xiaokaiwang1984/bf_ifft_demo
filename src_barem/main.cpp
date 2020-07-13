@@ -43,6 +43,9 @@ int main()
 	Xil_Out32(XPAR_GPIO_0_BASEADDR , 0x3);
 	Xil_Out32(XPAR_GPIO_0_BASEADDR , 0x1);
 
+	//avoid QEMU quit
+	for (i=0;i<0xffffffff;i++)
+		printf("Test is going \n");
 	
 	
 	/*
