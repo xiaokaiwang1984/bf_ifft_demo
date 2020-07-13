@@ -30,6 +30,7 @@ pack:bf_ifft.xclbin
 	
 sim:
 	./launch_hw_emu.sh -noc-ddr-shared-mem qemu-memory-_ddr@0x00000000 -add-env VITIS_LAUNCH_WAVEFORM_GUI=1 -g
+
 	
 
 clean:
