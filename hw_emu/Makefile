@@ -6,17 +6,30 @@ IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 
 
 
-.PHONY:clean
+.PHONY:clean sim pack
 
-all:sim
+all:bf_ifft.xclbin pack sim
 
 bf_ifft.xclbin:
-	v++ -l --user_ip_repo_paths ../IPs/iprepo --save-temps --platform ../platform/bf_ifft_v1_0.xpfm ../src_aie/libsdf.a -t hw_emu --config ./system.cfg -g -o bf_ifft.xclbin
+	v++ -l -t hw_emu ../src_aie/libsdf.a -o bf_ifft.xclbin --save-temps -g \
+	--user_ip_repo_paths ../IPs/iprepo \
+	--platform ../platform/bf_ifft_v1_0.xpfm \
+	--config ./system.cfg \
+
 
 	
-sim:bf_ifft.xclbin
-	v++ -p -t hw_emu -f ../platform/bf_ifft_v1_0.xpfm --package.rootfs=${ROOTFS} --package.image_format=ext4 --package.boot_mode=sd --package.kernel_image=${IMAGE} --package.sd_file ../src_barem/main.elf bf_ifft.xclbin ../src_aie/libsdf.a
-	./launch_hw_emu.sh -noc-ddr-shared-mem qemu-memory-_ddr@0x00000000 -add-env VITIS_LAUNCH_WAVEFORM_BATCH=1 -graphic-xsim
+pack:bf_ifft.xclbin
+	v++ -p -t hw_emu  bf_ifft.xclbin ../src_aie/libsdf.a \
+	-f ../platform/bf_ifft_v1_0.xpfm \
+	--package.out_dir ./ \
+	--package.domain aiengine \
+	--package.boot_mode sd \
+	--package.image_format fat32 \
+	--package.ps_elf ../src_barem/main.elf,a72-0
+	
+	
+sim:
+	./launch_hw_emu.sh -noc-ddr-shared-mem qemu-memory-_ddr@0x00000000 -add-env VITIS_LAUNCH_WAVEFORM_GUI=0 -g
 	
 
 clean:
