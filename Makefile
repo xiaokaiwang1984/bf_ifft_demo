@@ -1,6 +1,10 @@
-.PHONY: clean IPs platform aie hw_emu
+.PHONY: clean IPs platform aie hw_emu hw
 
-all:IPs platform aie barem hw_emu
+all:cosim
+
+cosim:IPs platform aie barem hw_emu
+
+pdi:IPs platform aie barem hw
 
 IPs:
 	make -C IPs
@@ -17,6 +21,9 @@ barem:
 hw_emu:
 	make -C hw_emu
 	
+hw:
+	make -C hw
+	
 
 
 
@@ -26,3 +33,4 @@ clean:
 	make clean -C hw_emu
 	make clean -C src_barem
 	make clean -C src_aie
+	make clean -C hw
