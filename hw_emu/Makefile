@@ -1,6 +1,6 @@
-VPP_FLAGS=--save-temps --verbose  --user_ip_repo_paths ${USER_IPREPO} --xp param:hw_emu.enableDebugWaveform=true --vivado.prop fileset.sim_1.xsim.simulate.runtime=100us --remote_ip_cache ./ip_cache
-ROOTFS=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/rootfs.ext4
-IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
+#VPP_FLAGS=--save-temps --verbose  --user_ip_repo_paths ${USER_IPREPO} --xp param:hw_emu.enableDebugWaveform=true --vivado.prop fileset.sim_1.xsim.simulate.runtime=100us --remote_ip_cache ./ip_cache
+#ROOTFS=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/rootfs.ext4
+#IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 #ROOTFS=/proj/xbuilds/2020.1_daily_latest/internal_platforms/sw/versal/xilinx-versal-common-v2020.1/rootfs.ext4
 #IMAGE=/proj/xbuilds/2020.1_daily_latest/internal_platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 
@@ -9,6 +9,14 @@ IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 .PHONY:clean sim pack
 
 all:bf_ifft.xclbin pack sim
+
+
+pdi:
+	v++ -l -t hw_emu ../src_aie/libsdf.a -o bf_ifft.xclbin --save-temps -g \
+	--user_ip_repo_paths ../IPs/iprepo \
+	--platform ../platform/bf_ifft_v1_0.xpfm \
+	--config ./system.cfg \
+	
 
 bf_ifft.xclbin:
 	v++ -l -t hw_emu ../src_aie/libsdf.a -o bf_ifft.xclbin --save-temps -g \
@@ -29,7 +37,7 @@ pack:bf_ifft.xclbin
 	
 	
 sim:
-	./launch_hw_emu.sh -noc-ddr-shared-mem qemu-memory-_ddr@0x00000000 -add-env VITIS_LAUNCH_WAVEFORM_GUI=1 -g
+	./launch_hw_emu.sh -g
 
 	
 

@@ -22,7 +22,7 @@ source ./pfm.tcl
 add_files -fileset constrs_1 -norecurse ./xdc/vck190_loc.xdc
 add_files -fileset constrs_1 -norecurse ./xdc/ddr.xdc
 add_files -fileset constrs_1 -norecurse ./xdc/timing.xdc
-add_files -fileset constrs_1 -norecurse ./xdc/aieshim_loc_constraints_mod.xdc
+#add_files -fileset constrs_1 -norecurse ./xdc/aieshim_loc_constraints_mod.xdc
 add_files -fileset constrs_1 -norecurse ./xdc/design_1_wrapper_debug.xdc
 
 make_wrapper -files [get_files ${proj_dir}/${project}/${project}.srcs/sources_1/bd/design_1/design_1.bd] -top
