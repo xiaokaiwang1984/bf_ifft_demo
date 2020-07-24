@@ -237,7 +237,7 @@ proc create_root_design { parentCell } {
    CONFIG.C_AXI_ADDR_WIDTH {44} \
    CONFIG.C_AXI_DATA_WIDTH {128} \
    CONFIG.C_AXI_ID_WIDTH {16} \
-   CONFIG.C_NUM_DEBUG_CORES {0} \
+   CONFIG.C_NUM_DEBUG_CORES {8} \
  ] $axi_dbg_hub_0
 
   # Create instance: axi_dma_0, and set properties
