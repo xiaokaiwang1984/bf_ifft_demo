@@ -9,6 +9,5 @@ all:main.elf
 	cp main.elf ../images
 
 clean:
-	rm *.o
-	rm main.elf
+	rm -rf *.o main.elf
 	

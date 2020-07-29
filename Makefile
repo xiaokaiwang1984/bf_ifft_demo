@@ -1,10 +1,16 @@
-.PHONY: clean IPs platform aie hw_emu hw
+.PHONY: clean IPs platform src_aie src_barem src_linux hw_emu boot_barem boot_linux 
 
 all:cosim
 
-cosim:IPs platform aie barem hw_emu
+cosim:IPs platform src_aie src_barem hw_emu
 
-pdi:IPs platform aie barem hw
+hw_barem:IPs platform src_aie src_barem xclbin boot_barem
+
+hw_linux:IPs platform src_aie src_linux xclbin build_linux boot_linux
+
+
+linux:
+	make -C build_linux
 
 IPs:
 	make -C IPs
@@ -12,17 +18,29 @@ IPs:
 platform:
 	make -C platform
 	
-aie:
+src_aie:
 	make -C src_aie	
 	
-barem:
+src_barem:
 	make -C src_barem
+	
+src_linux:
+	make -C src_linux
+	
+build_linux:
+	make -C build_linux
 
 hw_emu:
 	make -C hw_emu
 	
-hw:
-	make -C hw
+xclbin:
+	make xclbin -C hw
+	
+boot_barem:
+	make boot_barem -C hw
+	
+boot_linux:
+	make boot_linux -C hw
 	
 
 
@@ -33,4 +51,6 @@ clean:
 	make clean -C hw_emu
 	make clean -C src_barem
 	make clean -C src_aie
+	make clean -C src_linux
 	make clean -C hw
+	make clean -C build_linux
