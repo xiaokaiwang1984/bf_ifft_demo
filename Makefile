@@ -1,4 +1,4 @@
-.PHONY: clean IPs platform src_aie src_barem src_linux hw_emu boot_barem boot_linux 
+.PHONY: clean IPs platform src_aie src_barem src_linux hw_emu boot_barem build_linux 
 
 all:cosim
 
@@ -9,8 +9,6 @@ hw_barem:IPs platform src_aie src_barem xclbin boot_barem
 hw_linux:IPs platform src_aie src_linux xclbin build_linux boot_linux
 
 
-linux:
-	make -C build_linux
 
 IPs:
 	make -C IPs

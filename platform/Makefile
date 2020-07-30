@@ -1,4 +1,4 @@
-.PHONY: clean build xsa output
+.PHONY: clean build xsa output hw/design_1.xsa
 
 all:bf_ifft_v1_0.xpfm
 

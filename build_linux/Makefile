@@ -10,9 +10,9 @@ all: copy_xsa petalinux
 copy_xsa:
 	cp -f ../hw/bf_ifft_hw.xsa ./
 	
-
+petalinux:vck190_linux/images
 	
-petalinux : 
+vck190_linux/images : 
 	petalinux-create -t project -s $(PATH_TO_BSP)/$(BSP) -n $(PETALINUX_DIR)
 	petalinux-config -p $(PETALINUX_DIR) --get-hw-description=. --silentconfig
 # update_yocto_config enable state-cache

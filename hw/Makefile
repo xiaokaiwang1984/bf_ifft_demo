@@ -11,7 +11,7 @@ IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 xclbin:bf_ifft_hw.xclbin
 
 
-bf_ifft_hw.xclbin:
+bf_ifft_hw.xclbin:../platform/bf_ifft_v1_0.xpfm ../src_aie/libsdf.a system.cfg
 	v++ -l -t hw ../src_aie/libsdf.a -o bf_ifft_hw.xclbin --save-temps -g \
 	--user_ip_repo_paths ../IPs/iprepo \
 	--platform ../platform/bf_ifft_v1_0.xpfm \
@@ -28,6 +28,7 @@ boot_barem:
 	
 	
 boot_linux:
+	tar zcvf app.tgz ../src_linux/bf_ifft_test.exe ../src_linux/data
 	v++ -p -t hw bf_ifft_hw.xclbin ../src_aie/libsdf.a \
 	-f ../platform/bf_ifft_v1_0.xpfm \
 	--package.out_dir ./boot_linux \
@@ -37,12 +38,13 @@ boot_linux:
 	--package.uboot ../build_linux/vck190_linux/images/linux/u-boot.elf \
 	--package.dtb ../build_linux/vck190_linux/images/linux/system.dtb \
 	--package.boot_mode=sd \
-	--package.image_format=fat32 
+	--package.image_format fat32 \
+	--package.sd_file ./app.tgz 
 	
 	
-
+#	--package.rootfs ../build_linux/vck190_linux/images/linux/rootfs.cpio.gz.u-boot \
 	
 
 clean:
-	rm -rf *xclbin* *.log BOOT* *.xsa *.bin _x sd_card sim emu_qemu_scripts libsdf boot_* launch* qemu_* hw.* pmc_* sd_* v++* *.ltx vivado* .Xil
+	rm -rf *xclbin* *.log BOOT* *.xsa *.bin _x sd_card sim emu_qemu_scripts libsdf boot_* launch* qemu_* hw.* pmc_* sd_* v++* *.ltx vivado* .Xil app.tgz 
 
