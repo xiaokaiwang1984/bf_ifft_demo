@@ -1,4 +1,4 @@
-PATH_TO_BSP := /opt/petalinux
+PATH_TO_BSP := /opt/petalinux/2020.2_SAM
 BSP := xilinx-vck190-es1-v2020.2_SAM-final.bsp
 
 PETALINUX_DIR := vck190_linux
@@ -16,7 +16,9 @@ vck190_linux/images :
 	petalinux-create -t project -s $(PATH_TO_BSP)/$(BSP) -n $(PETALINUX_DIR)
 	petalinux-config -p $(PETALINUX_DIR) --get-hw-description=. --silentconfig
 # update_yocto_config enable state-cache
-	@sed -i -E 's/CONFIG_YOCTO_LOCAL_SSTATE_FEEDS_URL="/CONFIG_YOCTO_LOCAL_SSTATE_FEEDS_URL="\/opt\/petalinux\/sstate_aarch64_2020.2_SAM\/aarch64/' $(PETALINUX_DIR)/project-spec/configs/config	
+	@sed -i -E 's/CONFIG_YOCTO_LOCAL_SSTATE_FEEDS_URL="/CONFIG_YOCTO_LOCAL_SSTATE_FEEDS_URL="\/opt\/petalinux\/2020.2_SAM\/sstate_aarch64_2020.2_SAM\/aarch64/' $(PETALINUX_DIR)/project-spec/configs/config	
+	@sed -i -E 's/CONFIG_PRE_MIRROR_URL=/#CONFIG_PRE_MIRROR_URL=/g' $(PETALINUX_DIR)/project-spec/configs/config
+	@sed -i -E '/CONFIG_PRE_MIRROR_URL=/a CONFIG_PRE_MIRROR_URL="file:///opt/petalinux/2020.2_SAM/downloads"' $(PETALINUX_DIR)/project-spec/configs/config
 	
 # update_rootfs_config
 	@sed -i -E 's/.*CONFIG_libmetal.+/CONFIG_libmetal=y/' $(PETALINUX_DIR)/project-spec/configs/rootfs_config
