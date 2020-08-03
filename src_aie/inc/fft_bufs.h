@@ -130,7 +130,6 @@ extern cint16_t fft_lut_tw160[FFT_160];
 extern cint16_t fft_lut_tw192[FFT_192];
 extern cint16_t fft_lut_tw224[FFT_224];
 extern cint16_t fft_lut_tw256[FFT_256];
-extern cint16_t fft_lut_tw256[FFT_256];
 extern cint16_t fft_lut_tw300[FFT_300];
 extern cint16_t fft_lut_tw320[FFT_320];
 extern cint16_t fft_lut_tw300o2[FFT_300];

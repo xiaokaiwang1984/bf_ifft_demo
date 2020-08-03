@@ -4,10 +4,28 @@
 #include <stdio.h>
 #include <xparameters.h>
 
+#ifdef XRT_LD_AIE
 #include "xrt.h"
 #include "experimental/xrt_aie.h"
+#include <vector>
+#endif
 
 using namespace std ;
+
+extern "C"
+  {
+	#include <errno.h>
+	#include <sys/wait.h>
+	#include <fcntl.h>
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+	#include <sys/mman.h>
+	#include <unistd.h>
+
+  }
+
+#ifdef XRT_LD_AIE
 
 static std::vector<char>
  load_xclbin(xclDeviceHandle device, const std::string& fnm)
@@ -31,26 +49,11 @@ static std::vector<char>
      throw std::runtime_error("Bitstream download failed");
    return header;
 }
+#endif
 
-
-
-extern "C"
-  {
-	#include <errno.h>
-	#include <sys/wait.h>
-	#include <fcntl.h>
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <string.h>
-	#include <sys/mman.h>
-	#include <unistd.h>
-
-  }
-
-
-int pmem_wr (unsigned int address, unsigned int wr_data ) {
+int pmem_wr (unsigned long long int address, unsigned int wr_data ) {
 	char cmd [50];
-	sprintf(cmd, "devmem 0x%08x 32 0x%08x", address, wr_data);
+	sprintf(cmd, "devmem 0x%x 32 0x%08x", address, wr_data);
 
 	system(cmd);
 
@@ -59,12 +62,14 @@ int pmem_wr (unsigned int address, unsigned int wr_data ) {
 }
 
 
-unsigned int pmem_rd (unsigned int address ){
+unsigned int pmem_rd (unsigned long long int address ){
 	char cmd [50];
 	char result [50];
 	unsigned int result_value;
 	FILE *fp;
-	sprintf(cmd, "devmem 0x%08x", address);
+	printf("reading address:0x%x\r\n",address);
+	
+	sprintf(cmd, "devmem 0x%x", address);
 	
 	fp = popen(cmd, "r");
 	if(NULL == fp)
@@ -80,7 +85,7 @@ unsigned int pmem_rd (unsigned int address ){
 		{
 			result[strlen(result)-1] = '\0';
 		}
-		//printf("command[%s] outputs[%s]\r\n", cmd, result);
+//		printf("command[%s] outputs[%s]\r\n", cmd, result);
 	}
 	
 	sscanf(result,"%x",&result_value);
@@ -284,17 +289,30 @@ int main(int argc, char ** argv) {
 	unsigned int * ddr_buff1 = (unsigned int *)init_buff(0x40000000);
 	unsigned int * ddr_buff2 = (unsigned int *)init_buff(0x41000000);
 
-	
-	#####AIE reset and loading##############
+#ifdef XRT_LD_AIE	
+	//####AIE reset and loading##############
 	auto dhdl = xclOpen(0, nullptr, XCL_QUIET);
+//	auto dhdl = xclOpen(0, nullptr, XCL_INFO);
     xrtResetAIEArray(dhdl);						//RESET aie
+	printf("aie has been reseted......\n\r");
+	printf("aie.12_0 :0x%xn\r",pmem_rd(0x20006072004));
+	printf("aie.13_0 :0x%xn\r",pmem_rd(0x20006872004));
+	printf("aie.14_0 :0x%xn\r",pmem_rd(0x20007072004));
+	printf("aie.15_0 :0x%xn\r",pmem_rd(0x20007872004));
+	
     auto xclbin = load_xclbin(dhdl, argv[1]); 	//loading AIE image from xclbin
 	
+	printf("aie has been reloaded......\n\r");
+	printf("aie.12_0 :0x%xn\r",pmem_rd(0x20006072004));
+	printf("aie.13_0 :0x%xn\r",pmem_rd(0x20006872004));
+	printf("aie.14_0 :0x%xn\r",pmem_rd(0x20007072004));
+	printf("aie.15_0 :0x%xn\r",pmem_rd(0x20007872004));
+#endif
 	
 	
 	
 
-	#####AIE reset and loading##############
+	//####AIE reset and loading##############
 	
 	data_lgth_32b=ld_data("./data/din0.txt",ddr_buff1);
 	dp_data_hex("./data/din0_hex.txt",ddr_buff1,data_lgth_32b);

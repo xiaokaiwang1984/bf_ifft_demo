@@ -49,7 +49,8 @@
 #define __BF_KERNELS_H__
 
 
-extern "C" { 
+
+//extern "C" { 
   
     // beamforming kernels on AIE
 	void bf8x8_first(input_window_cint16  * restrict c_input, input_stream_cint16  * x_input,
@@ -61,7 +62,9 @@ extern "C" {
 	void bf8x8_last(input_window_cint16  * restrict c_input, input_stream_cint16  * x_input,
          input_stream_cacc48 * data_in, output_stream_cint16 * data_out);
   
-};
+//};
+
+
 
 #endif // __BF_KERNELS_H__
 

@@ -26,8 +26,16 @@ boot_barem:
 	--package.image_format fat32 \
 	--package.ps_elf ../src_barem/main.elf,a72-0
 	
+boot_wo_barem:
+	v++ -p -t hw bf_ifft_hw.xclbin ../src_aie/libsdf.a \
+	-f ../platform/bf_ifft_v1_0.xpfm \
+	--package.out_dir ./boot_barem \
+	--package.domain aiengine \
+	--package.boot_mode sd \
+	--package.image_format fat32 	
 	
-boot_linux:
+	
+boot_linux:xclbin_w_aie
 	tar zcvf app.tgz ../src_linux/bf_ifft_test.exe ../src_linux/data
 	v++ -p -t hw bf_ifft_hw.xclbin ../src_aie/libsdf.a \
 	-f ../platform/bf_ifft_v1_0.xpfm \
@@ -41,8 +49,19 @@ boot_linux:
 	--package.image_format fat32 \
 	--package.sd_file ./app.tgz 
 	
+xclbin_w_aie:
+	v++ -s -p -t hw ../src_aie/libsdf.a \
+	-f ../platform/bf_ifft_v1_0.xpfm \
+	--package.out_dir  ./ \
+    --config package.cfg 
+	mv a.xclbin aie_only.xclbin
+
 	
-#	--package.rootfs ../build_linux/vck190_linux/images/linux/rootfs.cpio.gz.u-boot \
+#	v++ -s -p -t hw -f ../../../../platforms/v1_0/vck190_v1_0.xpfm \
+#--package.out_dir  ./ \
+#        --config package.cfg \
+#         /home/jung/versal_ref/Magpie/designs/pinv/aie_app/libsdf.a
+
 	
 
 clean:

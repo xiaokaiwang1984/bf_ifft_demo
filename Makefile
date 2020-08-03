@@ -6,7 +6,7 @@ cosim:IPs platform src_aie src_barem hw_emu
 
 hw_barem:IPs platform src_aie src_barem xclbin boot_barem
 
-hw_linux:IPs platform src_aie src_linux xclbin build_linux boot_linux
+hw_linux:IPs platform src_aie xclbin build_linux src_linux xclbin_w_aie boot_linux
 
 
 
