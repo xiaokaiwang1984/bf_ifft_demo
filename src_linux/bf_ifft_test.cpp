@@ -4,10 +4,28 @@
 #include <stdio.h>
 #include <xparameters.h>
 
+#ifdef TEST2
 #include "xrt.h"
 #include "experimental/xrt_aie.h"
+#include <vector>
+#endif
 
 using namespace std ;
+
+extern "C"
+  {
+	#include <errno.h>
+	#include <sys/wait.h>
+	#include <fcntl.h>
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+	#include <sys/mman.h>
+	#include <unistd.h>
+
+  }
+
+#ifdef TEST2
 
 static std::vector<char>
  load_xclbin(xclDeviceHandle device, const std::string& fnm)
@@ -31,22 +49,7 @@ static std::vector<char>
      throw std::runtime_error("Bitstream download failed");
    return header;
 }
-
-
-
-extern "C"
-  {
-	#include <errno.h>
-	#include <sys/wait.h>
-	#include <fcntl.h>
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <string.h>
-	#include <sys/mman.h>
-	#include <unistd.h>
-
-  }
-
+#endif
 
 int pmem_wr (unsigned int address, unsigned int wr_data ) {
 	char cmd [50];
@@ -284,17 +287,17 @@ int main(int argc, char ** argv) {
 	unsigned int * ddr_buff1 = (unsigned int *)init_buff(0x40000000);
 	unsigned int * ddr_buff2 = (unsigned int *)init_buff(0x41000000);
 
-	
-	#####AIE reset and loading##############
+#ifdef TEST2	
+	//####AIE reset and loading##############
 	auto dhdl = xclOpen(0, nullptr, XCL_QUIET);
     xrtResetAIEArray(dhdl);						//RESET aie
     auto xclbin = load_xclbin(dhdl, argv[1]); 	//loading AIE image from xclbin
-	
+#endif
 	
 	
 	
 
-	#####AIE reset and loading##############
+	//####AIE reset and loading##############
 	
 	data_lgth_32b=ld_data("./data/din0.txt",ddr_buff1);
 	dp_data_hex("./data/din0_hex.txt",ddr_buff1,data_lgth_32b);
