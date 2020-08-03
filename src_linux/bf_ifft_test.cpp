@@ -4,9 +4,33 @@
 #include <stdio.h>
 #include <xparameters.h>
 
+#include "xrt.h"
+#include "experimental/xrt_aie.h"
 
 using namespace std ;
 
+static std::vector<char>
+ load_xclbin(xclDeviceHandle device, const std::string& fnm)
+ {
+   if (fnm.empty())
+     throw std::runtime_error("No xclbin speified");
+
+   //load bit stream
+   std::ifstream stream(fnm);
+   stream.seekg(0,stream.end);
+   size_t size = stream.tellg();
+   stream.seekg(0,stream.beg);
+
+   std::vector<char> header(size);
+   stream.read(header.data(),size);
+
+   auto top = reinterpret_cast<const axlf*>(header.data());
+   char *xcb = (char*)top;
+   printf("xcb is %s\n", xcb);
+   if (xclLoadXclBin(device, top))
+     throw std::runtime_error("Bitstream download failed");
+   return header;
+}
 
 
 
@@ -261,8 +285,16 @@ int main(int argc, char ** argv) {
 	unsigned int * ddr_buff2 = (unsigned int *)init_buff(0x41000000);
 
 	
+	#####AIE reset and loading##############
+	auto dhdl = xclOpen(0, nullptr, XCL_QUIET);
+    xrtResetAIEArray(dhdl);						//RESET aie
+    auto xclbin = load_xclbin(dhdl, argv[1]); 	//loading AIE image from xclbin
+	
+	
+	
+	
 
-
+	#####AIE reset and loading##############
 	
 	data_lgth_32b=ld_data("./data/din0.txt",ddr_buff1);
 	dp_data_hex("./data/din0_hex.txt",ddr_buff1,data_lgth_32b);
