@@ -13,21 +13,27 @@ CFLAGS		:= -O3 -DPS_INIT_AIE -DPS_ENABLE_AIE -DXAIE_DEBUG
 
 
 #DIR_PFM := /group/techsup/robiny/vck190/Vitis_Embedded_Platform_Source/Xilinx_Official_Platforms/xilinx_vck190_base_202010_1/petalinux
+
 DIR_PFM 		:= ../build_linux/vck190_linux
+
 PFM_SYSROOT     := ${DIR_PFM}/images/linux/sdk/sysroots/aarch64-xilinx-linux/
 SYSROOT_INCLUDE := ${PFM_SYSROOT}/usr/include
 SYSROOT_LIB     := ${PFM_SYSROOT}/usr/lib
 AIE_INCLUDE     := $(PFM_SYSROOT)/usr/include/xaiengine
 AIE_LINKER      := $(PFM_SYSROOT)/lib
 LIB             := $(PFM_SYSROOT)
-
 XRT_INCLUDE     := $(PFM_SYSROOT)/usr/include/xrt
 
 
 
-all:bf_ifft_test.exe
 
 
+
+all:bf_ifft_test4.exe
+
+
+bf_ifft_test4.exe:bf_ifft_test.cpp
+	$(CC) $(CFLAGS) -DTEST2 -I$(PLAT_INC) $(AIE_APP) -o $(AIE_APP_EXE) --sysroot=$(PFM_SYSROOT) -I$(SYSROOT_INCLUDE) -I$(CARDANO_ROOT)/include/ -I$(AIE_INCLUDE) -I$(XRT_INCLUDE) $(PINV_INCLUDE_EXE) -Xlinker -rpath-link=$(PFM_SYSROOT)  -L$(PFM_SYSROOT)/../ -lxaiengine -lmetal -lopen_amp -lsysfs -lxrt_coreutil -lxrt_core -L$(AIE_LINKER) -Wl,-rpath,$(LIB),--warn-unresolved-symbol
 
 bf_ifft_test.exe:bf_ifft_test.cpp
 	$(CC) $(CFLAGS) -DXRT_LD_AIE -I$(PLAT_INC) $(AIE_APP) -o $(AIE_APP_EXE) --sysroot=$(PFM_SYSROOT) -I$(SYSROOT_INCLUDE) -I$(CARDANO_ROOT)/include/ -I$(AIE_INCLUDE) -I$(XRT_INCLUDE) $(PINV_INCLUDE_EXE) -Xlinker -rpath-link=$(PFM_SYSROOT)  -L$(PFM_SYSROOT)/../ -lxaiengine -lmetal -lopen_amp -lsysfs -lxrt_coreutil -lxrt_core -L$(AIE_LINKER) -Wl,-rpath,$(LIB),--warn-unresolved-symbol

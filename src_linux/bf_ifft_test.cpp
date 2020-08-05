@@ -4,7 +4,9 @@
 #include <stdio.h>
 #include <xparameters.h>
 
+
 #ifdef XRT_LD_AIE
+
 #include "xrt.h"
 #include "experimental/xrt_aie.h"
 #include <vector>
@@ -25,7 +27,9 @@ extern "C"
 
   }
 
+
 #ifdef XRT_LD_AIE
+
 
 static std::vector<char>
  load_xclbin(xclDeviceHandle device, const std::string& fnm)
@@ -51,7 +55,9 @@ static std::vector<char>
 }
 #endif
 
+
 int pmem_wr (unsigned long long int address, unsigned int wr_data ) {
+
 	char cmd [50];
 	sprintf(cmd, "devmem 0x%x 32 0x%08x", address, wr_data);
 
@@ -289,7 +295,9 @@ int main(int argc, char ** argv) {
 	unsigned int * ddr_buff1 = (unsigned int *)init_buff(0x40000000);
 	unsigned int * ddr_buff2 = (unsigned int *)init_buff(0x41000000);
 
+
 #ifdef XRT_LD_AIE	
+
 	//####AIE reset and loading##############
 	auto dhdl = xclOpen(0, nullptr, XCL_QUIET);
 //	auto dhdl = xclOpen(0, nullptr, XCL_INFO);
@@ -301,12 +309,14 @@ int main(int argc, char ** argv) {
 	printf("aie.15_0 :0x%xn\r",pmem_rd(0x20007872004));
 	
     auto xclbin = load_xclbin(dhdl, argv[1]); 	//loading AIE image from xclbin
+
 	
 	printf("aie has been reloaded......\n\r");
 	printf("aie.12_0 :0x%xn\r",pmem_rd(0x20006072004));
 	printf("aie.13_0 :0x%xn\r",pmem_rd(0x20006872004));
 	printf("aie.14_0 :0x%xn\r",pmem_rd(0x20007072004));
 	printf("aie.15_0 :0x%xn\r",pmem_rd(0x20007872004));
+
 #endif
 	
 	
