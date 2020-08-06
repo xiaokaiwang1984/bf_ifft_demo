@@ -4,14 +4,6 @@
 #include <stdio.h>
 #include <xparameters.h>
 
-
-#ifdef XRT_LD_AIE
-
-#include "xrt.h"
-#include "experimental/xrt_aie.h"
-#include <vector>
-#endif
-
 using namespace std ;
 
 extern "C"
@@ -28,7 +20,12 @@ extern "C"
   }
 
 
+
 #ifdef XRT_LD_AIE
+
+#include "xrt.h"
+#include "experimental/xrt_aie.h"
+#include <vector>
 
 
 static std::vector<char>
@@ -53,6 +50,7 @@ static std::vector<char>
      throw std::runtime_error("Bitstream download failed");
    return header;
 }
+
 #endif
 
 
@@ -68,14 +66,14 @@ int pmem_wr (unsigned long long int address, unsigned int wr_data ) {
 }
 
 
-unsigned int pmem_rd (unsigned long long int address ){
+unsigned int pmem_rd (unsigned long long address ){
 	char cmd [50];
 	char result [50];
 	unsigned int result_value;
 	FILE *fp;
-	printf("reading address:0x%x\r\n",address);
+//	printf("reading address:0x%llx\r\n",address);
 	
-	sprintf(cmd, "devmem 0x%x", address);
+	sprintf(cmd, "devmem 0x%llx", address);
 	
 	fp = popen(cmd, "r");
 	if(NULL == fp)
@@ -93,6 +91,8 @@ unsigned int pmem_rd (unsigned long long int address ){
 		}
 //		printf("command[%s] outputs[%s]\r\n", cmd, result);
 	}
+	
+
 	
 	sscanf(result,"%x",&result_value);
 	
@@ -302,20 +302,22 @@ int main(int argc, char ** argv) {
 	auto dhdl = xclOpen(0, nullptr, XCL_QUIET);
 //	auto dhdl = xclOpen(0, nullptr, XCL_INFO);
     xrtResetAIEArray(dhdl);						//RESET aie
+	
 	printf("aie has been reseted......\n\r");
-	printf("aie.12_0 :0x%xn\r",pmem_rd(0x20006072004));
-	printf("aie.13_0 :0x%xn\r",pmem_rd(0x20006872004));
-	printf("aie.14_0 :0x%xn\r",pmem_rd(0x20007072004));
-	printf("aie.15_0 :0x%xn\r",pmem_rd(0x20007872004));
+//	printf("aie.12_0 :0x%x\n\r",pmem_rd(0x20006072004ull));
+//	printf("aie.13_0 :0x%x\n\r",pmem_rd(0x20006872004ull));
+//	printf("aie.14_0 :0x%x\n\r",pmem_rd(0x20007072004ull));
+//	printf("aie.15_0 :0x%x\n\r",pmem_rd(0x20007872004ull));
+	
 	
     auto xclbin = load_xclbin(dhdl, argv[1]); 	//loading AIE image from xclbin
 
 	
 	printf("aie has been reloaded......\n\r");
-	printf("aie.12_0 :0x%xn\r",pmem_rd(0x20006072004));
-	printf("aie.13_0 :0x%xn\r",pmem_rd(0x20006872004));
-	printf("aie.14_0 :0x%xn\r",pmem_rd(0x20007072004));
-	printf("aie.15_0 :0x%xn\r",pmem_rd(0x20007872004));
+//	printf("aie.12_0 :0x%x\n\r",pmem_rd(0x20006072004ull));
+//	printf("aie.13_0 :0x%x\n\r",pmem_rd(0x20006872004ull));
+//	printf("aie.14_0 :0x%x\n\r",pmem_rd(0x20007072004ull));
+//	printf("aie.15_0 :0x%x\n\r",pmem_rd(0x20007872004ull));
 
 #endif
 	
@@ -399,6 +401,12 @@ int main(int argc, char ** argv) {
 	printf("Test sucessfully!!!   #\n\r");
 	printf("Ifft data compared with gloden reference without error #\n\r");
 	printf("########################################################\n\r");	
+	
+	
+	
+	pmem_wr(XPAR_GPIO_0_BASEADDR,0x0); //put PL in reset status
+	
+	
 
 	return 0;
 }

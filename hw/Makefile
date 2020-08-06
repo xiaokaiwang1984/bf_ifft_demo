@@ -57,11 +57,6 @@ xclbin_w_aie:
 	mv a.xclbin aie_only.xclbin
 
 	
-#	v++ -s -p -t hw -f ../../../../platforms/v1_0/vck190_v1_0.xpfm \
-#--package.out_dir  ./ \
-#        --config package.cfg \
-#         /home/jung/versal_ref/Magpie/designs/pinv/aie_app/libsdf.a
-
 	
 
 clean:
