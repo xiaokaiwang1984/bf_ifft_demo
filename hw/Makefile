@@ -11,8 +11,8 @@ IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 xclbin:bf_ifft_hw.xclbin
 
 
-bf_ifft_hw.xclbin:../platform/bf_ifft_v1_0.xpfm ../src_aie/libsdf.a system.cfg
-	v++ -l -t hw ../src_aie/libsdf.a -o bf_ifft_hw.xclbin --save-temps -g \
+bf_ifft_hw.xclbin:../platform/bf_ifft_v1_0.xpfm ../src_aie/libsdf.a system.cfg ./axi4s_regslice_64b.xo
+	v++ -l -t hw ../src_aie/libsdf.a -o bf_ifft_hw.xclbin ./axi4s_regslice_64b.xo --save-temps -g \
 	--user_ip_repo_paths ../IPs/iprepo \
 	--platform ../platform/bf_ifft_v1_0.xpfm \
 	--config ./system.cfg \
@@ -57,11 +57,6 @@ xclbin_w_aie:
 	mv a.xclbin aie_only.xclbin
 
 	
-#	v++ -s -p -t hw -f ../../../../platforms/v1_0/vck190_v1_0.xpfm \
-#--package.out_dir  ./ \
-#        --config package.cfg \
-#         /home/jung/versal_ref/Magpie/designs/pinv/aie_app/libsdf.a
-
 	
 
 clean:
