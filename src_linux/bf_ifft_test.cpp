@@ -3,8 +3,12 @@
 #include <sstream>
 #include <stdio.h>
 #include <xparameters.h>
+#ifdef DUT_LD_AIE
+#include <test_dl8a.h>
+#endif
 
 using namespace std ;
+
 
 extern "C"
   {
@@ -17,8 +21,63 @@ extern "C"
 	#include <sys/mman.h>
 	#include <unistd.h>
 
+	#include <stdint.h>
+	#include <xaiengine.h>
+
   }
 
+#ifdef DUT_LD_AIE
+using namespace cardano ;
+
+PLIO *attr_i_d0 = new PLIO("d0", plio_64_bits, "../src_aie/data/din0.txt");
+PLIO *attr_i_d1 = new PLIO("d1", plio_64_bits, "../src_aie/data/din1.txt");
+PLIO *attr_i_d2 = new PLIO("d2", plio_64_bits, "../src_aie/data/din2.txt");
+PLIO *attr_i_d3 = new PLIO("d3", plio_64_bits, "../src_aie/data/din3.txt");
+
+PLIO *attr_i_c0 = new PLIO("c0", plio_64_bits, "../src_aie/data/coeff00.txt");
+PLIO *attr_i_c1 = new PLIO("c1", plio_64_bits, "../src_aie/data/coeff01.txt");
+PLIO *attr_i_c2 = new PLIO("c2", plio_64_bits, "../src_aie/data/coeff02.txt");
+PLIO *attr_i_c3 = new PLIO("c3", plio_64_bits, "../src_aie/data/coeff03.txt");
+
+PLIO *attr_i_ifi0a = new PLIO("ifi0a", plio_64_bits, "../src_aie/data/ifft_in00.txt");
+PLIO *attr_i_ifi0b = new PLIO("ifi0b", plio_64_bits, "../src_aie/data/ifft_in01.txt");
+
+PLIO *attr_o_bf0   = new PLIO("bfo0",  plio_64_bits, "../src_aie/data/out0.txt");
+PLIO *attr_o_ifo0a = new PLIO("ifo0a", plio_64_bits, "../src_aie/data/ifft_out00.txt");
+PLIO *attr_o_ifo0b = new PLIO("ifo0b", plio_64_bits, "../src_aie/data/ifft_out01.txt");
+
+
+
+testcase::sim_platform platform(
+   attr_i_d0,	attr_i_d1,	attr_i_d2,	 attr_i_d3,
+	attr_i_c0,	 attr_i_c1,  attr_i_c2,   attr_i_c3,
+	attr_i_ifi0a, attr_i_ifi0b,
+	attr_o_bf0,
+	attr_o_ifo0a, attr_o_ifo0b
+);
+
+testcase::TEST_DL8A dut;
+
+//--------------- Beamforming ------------------
+connect<> netd0(platform.src[0], dut.din[0]);
+connect<> netd1(platform.src[1], dut.din[1]);
+connect<> netd2(platform.src[2], dut.din[2]);
+connect<> netd3(platform.src[3], dut.din[3]);
+connect<> netc0(platform.src[4], dut.cin[0]);
+connect<> netc1(platform.src[5], dut.cin[1]);
+connect<> netc2(platform.src[6], dut.cin[2]);
+connect<> netc3(platform.src[7], dut.cin[3]);
+//
+connect<> netbfout10a(dut.bfout,  platform.sink[ 0]);
+
+//--------------- IFFT -------------------------
+connect<> i00(platform.src[8] , dut.ifftin[0]  );
+connect<> i01(platform.src[9] , dut.ifftin[1]  );
+connect<> y00(dut.ifftout[0],   platform.sink[1]);
+connect<> y01(dut.ifftout[1],   platform.sink[2]);
+//-----------------------------------------------
+
+#endif
 
 
 #ifdef XRT_LD_AIE
@@ -32,7 +91,7 @@ static std::vector<char>
  load_xclbin(xclDeviceHandle device, const std::string& fnm)
  {
    if (fnm.empty())
-     throw std::runtime_error("No xclbin speified");
+	 throw std::runtime_error("No xclbin speified");
 
    //load bit stream
    std::ifstream stream(fnm);
@@ -47,7 +106,7 @@ static std::vector<char>
    char *xcb = (char*)top;
    printf("xcb is %s\n", xcb);
    if (xclLoadXclBin(device, top))
-     throw std::runtime_error("Bitstream download failed");
+	 throw std::runtime_error("Bitstream download failed");
    return header;
 }
 
@@ -55,12 +114,9 @@ static std::vector<char>
 
 
 int pmem_wr (unsigned long long int address, unsigned int wr_data ) {
-
 	char cmd [50];
 	sprintf(cmd, "devmem 0x%x 32 0x%08x", address, wr_data);
-
 	system(cmd);
-
 	
 	return 0;
 }
@@ -81,7 +137,6 @@ unsigned int pmem_rd (unsigned long long address ){
 		perror("popen failed! \n");
 		exit(1);
 	}
-
 	
 	while(fgets(result, 50, fp) != NULL)
 	{
@@ -92,18 +147,13 @@ unsigned int pmem_rd (unsigned long long address ){
 //		printf("command[%s] outputs[%s]\r\n", cmd, result);
 	}
 	
-
-	
 	sscanf(result,"%x",&result_value);
 	
 	return result_value;
-	
-	
-
 }
 
 int tx_dma (int dma_lgth) {
-	pmem_wr(XPAR_AXI_DMA_0_BASEADDR,1); 				//enable
+	pmem_wr(XPAR_AXI_DMA_0_BASEADDR,1);					//enable
 	pmem_wr(XPAR_AXI_DMA_0_BASEADDR + 0x18,0x40000000); //ddr address
 	pmem_wr(XPAR_AXI_DMA_0_BASEADDR + 0x1c,0);			//ddr address msb
 	pmem_wr(XPAR_AXI_DMA_0_BASEADDR + 0x28,dma_lgth);	//ddr address msb
@@ -113,7 +163,7 @@ int tx_dma (int dma_lgth) {
 
 
 int rx_dma (int dma_lgth) {
-	pmem_wr(XPAR_AXI_DMA_2_BASEADDR + 0x30,1); 			//enable
+	pmem_wr(XPAR_AXI_DMA_2_BASEADDR + 0x30,1);			//enable
 	pmem_wr(XPAR_AXI_DMA_2_BASEADDR + 0x48,0x40000000); //ddr address
 	pmem_wr(XPAR_AXI_DMA_2_BASEADDR + 0x4c,0);			//ddr address msb
 	pmem_wr(XPAR_AXI_DMA_2_BASEADDR + 0x58,dma_lgth);	//ddr address msb
@@ -145,13 +195,13 @@ int ld_data (string file_name, unsigned int* ddr_buff) {
 	int buff_pointer =0;
 	int data_combined; 
 	
-  	ifstream myfile (file_name);
+	ifstream myfile (file_name);
 	
-  	if (myfile.is_open())
-  		{
-    	while ( getline (myfile,line) )
-    		{
-      		//cout << line << '\n';
+	if (myfile.is_open())
+		{
+		while ( getline (myfile,line) )
+			{
+			//cout << line << '\n';
 			line_data =line.data();
 			sscanf(line_data,"%d %d %d %d",&data_0, &data_1, &data_2, &data_3);
 			data_combined = (data_1)*0x10000 + (data_0&0xffff);
@@ -165,10 +215,10 @@ int ld_data (string file_name, unsigned int* ddr_buff) {
 			buff_pointer++;
 //			printf("0x%04x 0x%04x 0x%04x 0x%04x \r\n",data_0&0xffff, data_1&0xffff, data_2&0xffff, data_3&0xffff);
 		
-    		}
-    		myfile.close();
-  		}
-  	else 
+			}
+			myfile.close();
+		}
+	else 
 		cout << "Unable to open file"; 
 	
 	printf("%s loaded sucessfully and data length: 0x%x x32bit \r\n",file_name.data(),buff_pointer); 
@@ -183,7 +233,7 @@ void dp_data (string file_name, unsigned int* ddr_buff, int data_lgth_32b) {
 	signed short data_0,data_1,data_2,data_3;
 	
 	if (myfile.is_open())
-  	{
+	{
 		for (i=0;i<data_lgth_32b;i=i+2)
 		{
 			data_0=((*(ddr_buff+i))&0xffff);
@@ -196,8 +246,8 @@ void dp_data (string file_name, unsigned int* ddr_buff, int data_lgth_32b) {
 		}
 		printf("%s file dumped sucessfully \n\r",file_name.data());
 		myfile.close();
-  	}
-  	else 
+	}
+	else 
 		cout << "Unable to open file";
 }
 
@@ -209,7 +259,7 @@ void dp_data_hex (string file_name, unsigned int* ddr_buff, int data_lgth_32b) {
 	signed short data_0,data_1,data_2,data_3;
 	
 	if (myfile.is_open())
-  	{
+	{
 		for (i=0;i<data_lgth_32b;i=i+2)
 		{
 			data_0=((*(ddr_buff+i))&0xffff);
@@ -222,8 +272,8 @@ void dp_data_hex (string file_name, unsigned int* ddr_buff, int data_lgth_32b) {
 		}
 		printf("%s file dumped sucessfully \n\r",file_name.data());
 		myfile.close();
-  	}
-  	else 
+	}
+	else 
 		cout << "Unable to open file";
 }
 
@@ -247,7 +297,6 @@ void verify_data (unsigned int* ddr_buff1, unsigned int* ddr_buff2, int data_lgt
 	printf("########################################################\n\r");
 	printf("Total:0x%0x x32bits Data compared and data matched!    #\n\r",i);
 	printf("########################################################\n\r");		 
-
 }
 
 
@@ -259,7 +308,6 @@ void start_pl() {
 
 
 void initialize ( ) {
-
 	//reset PL
 	pmem_wr(XPAR_GPIO_0_BASEADDR,0x0);
 	pmem_wr(XPAR_GPIO_0_BASEADDR,0x1);
@@ -267,62 +315,63 @@ void initialize ( ) {
 	//reset DMA
 	pmem_wr(XPAR_AXI_DMA_0_BASEADDR,0x4);
 	pmem_wr(XPAR_AXI_DMA_2_BASEADDR + 0x30 ,0x4);
-	
 }
 
 
 
 void* init_buff (unsigned int addr_base) {
-	
 //	int pagesize = sysconf(_SC_PAGE_SIZE);
-//    printf("page size:0x%x\n\r",pagesize);
+//	  printf("page size:0x%x\n\r",pagesize);
 
-    int fd = open("/dev/mem", (O_RDWR | O_SYNC));
-    void* mem = mmap(NULL, 0x1000000, PROT_READ | PROT_WRITE, MAP_SHARED, fd, addr_base);
-        
+	int fd = open("/dev/mem", (O_RDWR | O_SYNC));
+	void* mem = mmap(NULL, 0x1000000, PROT_READ | PROT_WRITE, MAP_SHARED, fd, addr_base);
+		
 	return mem;
 }
 
 
-
-
-
-
 int main(int argc, char ** argv) {
-
 	int data_lgth_32b;
 	initialize();
 	unsigned int * ddr_buff1 = (unsigned int *)init_buff(0x40000000);
 	unsigned int * ddr_buff2 = (unsigned int *)init_buff(0x41000000);
 
-
 #ifdef XRT_LD_AIE	
-
 	//####AIE reset and loading##############
 	auto dhdl = xclOpen(0, nullptr, XCL_QUIET);
 //	auto dhdl = xclOpen(0, nullptr, XCL_INFO);
-    xrtResetAIEArray(dhdl);						//RESET aie
+	printf("aie.12_0 :0x%x\n\r",pmem_rd(0x20006072004ull));
+	xrtResetAIEArray(dhdl);						//RESET aie
 	
-	printf("aie has been reseted......\n\r");
-//	printf("aie.12_0 :0x%x\n\r",pmem_rd(0x20006072004ull));
+	printf("aie has been reseted by xrt......\n\r");
+	printf("aie.12_0 :0x%x\n\r",pmem_rd(0x20006072004ull));
 //	printf("aie.13_0 :0x%x\n\r",pmem_rd(0x20006872004ull));
 //	printf("aie.14_0 :0x%x\n\r",pmem_rd(0x20007072004ull));
 //	printf("aie.15_0 :0x%x\n\r",pmem_rd(0x20007872004ull));
 	
-	
-    auto xclbin = load_xclbin(dhdl, argv[1]); 	//loading AIE image from xclbin
-
+	auto xclbin = load_xclbin(dhdl, argv[1]);	//loading AIE image from xclbin
 	
 	printf("aie has been reloaded......\n\r");
-//	printf("aie.12_0 :0x%x\n\r",pmem_rd(0x20006072004ull));
+	printf("aie.12_0 :0x%x\n\r",pmem_rd(0x20006072004ull));
 //	printf("aie.13_0 :0x%x\n\r",pmem_rd(0x20006872004ull));
 //	printf("aie.14_0 :0x%x\n\r",pmem_rd(0x20007072004ull));
 //	printf("aie.15_0 :0x%x\n\r",pmem_rd(0x20007872004ull));
 
 #endif
+
+#ifdef DUT_LD_AIE
+	printf("aie.12_0 control:0x%x\n\r",pmem_rd(0x20006072000ull));
+	printf("aie.12_0 status :0x%x\n\r",pmem_rd(0x20006072004ull));
+	printf("aie initilization by dut.init()...\n");
+	dut.init();
+	printf("aie.12_0 control:0x%x\n\r",pmem_rd(0x20006072000ull));
+	printf("aie.12_0 status :0x%x\n\r",pmem_rd(0x20006072004ull));
 	
-	
-	
+	printf("aie running...\n");
+	dut.run();
+	printf("aie.12_0 control:0x%x\n\r",pmem_rd(0x20006072000ull));
+	printf("aie.12_0 status :0x%x\n\r",pmem_rd(0x20006072004ull));
+#endif	
 
 	//####AIE reset and loading##############
 	
@@ -402,11 +451,7 @@ int main(int argc, char ** argv) {
 	printf("Ifft data compared with gloden reference without error #\n\r");
 	printf("########################################################\n\r");	
 	
-	
-	
 	pmem_wr(XPAR_GPIO_0_BASEADDR,0x0); //put PL in reset status
 	
-	
-
 	return 0;
 }
