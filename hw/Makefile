@@ -10,9 +10,14 @@ IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 
 xclbin:bf_ifft_hw.xclbin
 
+##--to_step=vpl.update_bd
+##--to_step vpl.impl.opt_design
+##--to_step vpl.impl.place_design
+#-R2 generate DCPs
 
 bf_ifft_hw.xclbin:../platform/bf_ifft_v1_0.xpfm ../src_aie/libsdf.a system.cfg ./axi4s_regslice_64b.xo
 	v++ -l -t hw ../src_aie/libsdf.a -o bf_ifft_hw.xclbin ./axi4s_regslice_64b.xo --save-temps -g \
+	-R2 \
 	--user_ip_repo_paths ../IPs/iprepo \
 	--platform ../platform/bf_ifft_v1_0.xpfm \
 	--config ./system.cfg \
@@ -36,7 +41,7 @@ boot_wo_barem:
 	
 	
 boot_linux:xclbin_w_aie
-	tar zcvf app.tgz ../src_linux/bf_ifft_test.exe ../src_linux/data
+	tar zcvf app.tgz aie_only.xclbin ../src_linux/bf_ifft_test.exe ../src_linux/data
 	v++ -p -t hw bf_ifft_hw.xclbin ../src_aie/libsdf.a \
 	-f ../platform/bf_ifft_v1_0.xpfm \
 	--package.out_dir ./boot_linux \

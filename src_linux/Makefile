@@ -36,7 +36,8 @@ bf_ifft_test.exe:bf_ifft_test.cpp
 	$(CC) $(CFLAGS) -DXRT_LD_AIE -I$(PLAT_INC) $(AIE_APP) ${AIE_APP_CTRL} -o $(AIE_APP_EXE) --sysroot=$(PFM_SYSROOT) -I$(SYSROOT_INCLUDE) -I$(CARDANO_ROOT)/include/ -I$(AIE_INCLUDE) -I$(XRT_INCLUDE) $(PINV_INCLUDE_EXE) -Xlinker -rpath-link=$(PFM_SYSROOT)  -L$(PFM_SYSROOT)/../ -lxaiengine -lmetal -lopen_amp -lsysfs -lxrt_coreutil -lxrt_core -L$(AIE_LINKER) -lcardano_api -L$(CARDANO_ROOT)/lib/aarch64.o  -Wl,-rpath,$(LIB),--warn-unresolved-symbol 
 
 send:${AIE_APP_EXE}
-	scp -r bf_ifft_test.exe ../hw/aie_only.xclbin data root@${BOARD_IP}:/home/root/
+	@sed -i -E '/${BOARD_IP}/d' ~/.ssh/known_hosts
+	./send2board root@${BOARD_IP}:/home/root/
 	
 clean:
 	rm -rf *.exe *.o
