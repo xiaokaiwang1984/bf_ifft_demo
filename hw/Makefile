@@ -4,6 +4,7 @@ IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 #ROOTFS=/proj/xbuilds/2020.1_daily_latest/internal_platforms/sw/versal/xilinx-versal-common-v2020.1/rootfs.ext4
 #IMAGE=/proj/xbuilds/2020.1_daily_latest/internal_platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 
+XPFM := ../build_linux/vck190_linux/images/linux
 
 
 .PHONY:clean bf_ifft_hw.xclbin boot_linux boot_barem
@@ -14,6 +15,7 @@ xclbin:bf_ifft_hw.xclbin
 ##--to_step vpl.impl.opt_design
 ##--to_step vpl.impl.place_design
 #-R2 generate DCPs
+##--reuse_impl ./_x/link/vivado/route4.dcp
 
 bf_ifft_hw.xclbin:../platform/bf_ifft_v1_0.xpfm ../src_aie/libsdf.a system.cfg ./axi4s_regslice_64b.xo
 	v++ -l -t hw ../src_aie/libsdf.a -o bf_ifft_hw.xclbin ./axi4s_regslice_64b.xo --save-temps -g \
@@ -37,11 +39,12 @@ boot_wo_barem:
 	--package.out_dir ./boot_barem \
 	--package.domain aiengine \
 	--package.boot_mode sd \
-	--package.image_format fat32 	
+	--package.image_format fat32
 	
 	
-boot_linux:xclbin_w_aie
-	tar zcvf app.tgz aie_only.xclbin ../src_linux/bf_ifft_test.exe ../src_linux/data
+
+boot_linux:xclbin_w_aie package_dut
+	tar zcvf app.tgz aie_only.xclbin ../src_linux/bf_ifft_test_xrt.exe ../src_linux/data
 	v++ -p -t hw bf_ifft_hw.xclbin ../src_aie/libsdf.a \
 	-f ../platform/bf_ifft_v1_0.xpfm \
 	--package.out_dir ./boot_linux \
@@ -58,10 +61,20 @@ xclbin_w_aie:
 	v++ -s -p -t hw ../src_aie/libsdf.a \
 	-f ../platform/bf_ifft_v1_0.xpfm \
 	--package.out_dir  ./ \
-    --config package.cfg 
+	--config package.cfg
 	mv a.xclbin aie_only.xclbin
 
-	
+
+package_dut:
+	cp $(XPFM)/BOOT.BIN ./
+	cp $(XPFM)/image.ub ./
+	rm -rf package package.zip
+	mkdir -p package/Work/aie
+	./create_work.sh
+	cp -r ../src_linux/bf_ifft_test_dut.exe ./package
+	cp -r ../src_aie/data ./package
+	zip -r package.zip package
+
 	
 
 clean:

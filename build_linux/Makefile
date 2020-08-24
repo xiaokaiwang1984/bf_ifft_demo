@@ -1,6 +1,10 @@
 #PATH_TO_BSP := /opt/petalinux/2020.2_SAM
 #BSP := xilinx-vck190-es1-v2020.2_SAM-final.bsp
 
+#ifneq ($(BSP_FILE), $(wildcard $(BSP_FILE)))
+#BSP_FILE := $(PATH_TO_BSP)/$(BSP)
+#endif
+
 PETALINUX_DIR := vck190_linux
 
 .PHONY: all clean copy_xsa petalinux
@@ -12,8 +16,10 @@ copy_xsa:
 	
 petalinux:vck190_linux/images
 	
-vck190_linux/images: 
-	petalinux-create -t project -s ${PETA_LINUX_BSP} -n ${PETALINUX_DIR}
+
+vck190_linux/images :
+	@echo "using BSP file: $(BSP_FILE)"
+	petalinux-create -t project -s $(BSP_FILE) -n $(PETALINUX_DIR)
 	petalinux-config -p $(PETALINUX_DIR) --get-hw-description=. --silentconfig
 # update_yocto_config enable state-cache
 	@sed -i -E 's/CONFIG_YOCTO_LOCAL_SSTATE_FEEDS_URL="/CONFIG_YOCTO_LOCAL_SSTATE_FEEDS_URL="\/opt\/petalinux\/2020.2_SAM\/sstate_aarch64_2020.2_SAM_EA2\/aarch64/' $(PETALINUX_DIR)/project-spec/configs/config	
