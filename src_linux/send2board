@@ -2,7 +2,7 @@
 
 
 #spawn scp bf_ifft_test.exe root@192.168.1.10:/home/root
-spawn scp -r bf_ifft_test.exe ../hw/aie_only.xclbin data [lrange $argv 0 0]
+spawn scp -r bf_ifft_test_xrt.exe bf_ifft_test_dut.exe ../hw/aie_only.xclbin ./data ../hw/package/Work  [lrange $argv 0 0]
 expect "(yes/no)?"
 send "yes\r"
 expect "password:"

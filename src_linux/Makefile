@@ -5,13 +5,12 @@
 
 
 
-BOARD_IP	:=192.168.1.10
-CC			:= aarch64-linux-gnu-g++
-AIE_APP		:= bf_ifft_test.cpp 
-AIE_APP_CTRL:= ../src_aie/Work/ps/c_rts/aie_control.cpp
-AIE_APP_EXE	:= bf_ifft_test.exe
-PLAT_INC	:=../platform/sw/bf_ifft_v1_0/standalone_domain/bspinclude/include
-CFLAGS		:= -O3 -DPS_INIT_AIE -DXAIE_DEBUG
+BOARD_IP		:=192.168.1.10
+CC				:= aarch64-linux-gnu-g++
+AIE_APP			:= bf_ifft_test.cpp 
+AIE_APP_CTRL	:=../src_aie/Work/ps/c_rts/aie_control.cpp
+PLAT_INC		:=../platform/sw/bf_ifft_v1_0/standalone_domain/bspinclude/include
+CFLAGS			:= -O3 -DPS_INIT_AIE -DXAIE_DEBUG
 
 
 DIR_PFM			:= ../build_linux/vck190_linux
@@ -24,31 +23,31 @@ LIB				:= $(PFM_SYSROOT)
 XRT_INCLUDE		:= $(PFM_SYSROOT)/usr/include/xrt
 
 
-AIE_APP_CTRL:= ../src_aie/Work/ps/c_rts/aie_control.cpp
-AIE_DIR		:= ../src_aie
-AIE_INC		:= $(AIE_DIR)/inc
-AIE_KERNELS	:= $(AIE_DIR)/kernels
+AIE_APP_CTRL	:= ../src_aie/Work/ps/c_rts/aie_control.cpp
+AIE_DIR			:= ../src_aie
+AIE_INC			:= $(AIE_DIR)/inc
+AIE_KERNELS		:= $(AIE_DIR)/kernels
 
 
 
 all:bf_ifft_test_xrt.exe bf_ifft_test_dut.exe
 
 bf_ifft_test_xrt.exe:bf_ifft_test.cpp
-	$(CC)  -DXRT_LD_AIE $(CFLAGS) -I$(PLAT_INC) $(AIE_APP) -o $(AIE_APP_EXE) \
+	$(CC)  -DXRT_LD_AIE $(CFLAGS) -I$(PLAT_INC) $(AIE_APP) -o bf_ifft_test_xrt.exe \
 	--sysroot=$(PFM_SYSROOT) -I$(SYSROOT_INCLUDE) -I$(CARDANO_ROOT)/include/ -I$(AIE_INCLUDE) -I$(XRT_INCLUDE) \
 	-Xlinker -rpath-link=$(PFM_SYSROOT)	-L$(PFM_SYSROOT)/../ -L$(AIE_LINKER) \
 	-lxaiengine -lmetal -lopen_amp -lsysfs -lxrt_coreutil -lxrt_core -Wl,-rpath,$(LIB),--warn-unresolved-symbol
-	mv $(AIE_APP_EXE) bf_ifft_test_xrt.exe
+
 
 bf_ifft_test_dut.exe:bf_ifft_test.cpp
-	$(CC) -DDUT_LD_AIE -DPS_ENABLE_AIE $(CFLAGS) $(AIE_APP_CTRL) $(AIE_APP) -o $(AIE_APP_EXE) \
+	$(CC) -DDUT_LD_AIE -DPS_ENABLE_AIE $(CFLAGS) $(AIE_APP_CTRL) $(AIE_APP) -o bf_ifft_test_dut.exe \
 	--sysroot=$(PFM_SYSROOT) -I$(PLAT_INC) -I$(CARDANO_ROOT)/include/ -I$(AIE_INCLUDE) -I$(AIE_DIR) -I$(AIE_INC) -I$(AIE_KERNELS)  -I$(SYSROOT_INCLUDE) -I./ \
 	-Xlinker -rpath-link=$(PFM_SYSROOT) -L$(CARDANO_ROOT)/lib/aarch64.o -L$(AIE_LINKER) -L$(PFM_SYSROOT)/../ \
 	-lxaiengine -lmetal -lopen_amp -lsysfs -lcardano_api -Wl,-rpath,$(LIB),--warn-unresolved-symbols
-	mv $(AIE_APP_EXE) bf_ifft_test_dut.exe
 
 
-send:${AIE_APP_EXE}
+
+send:bf_ifft_test_xrt.exe bf_ifft_test_dut.exe
 	@sed -i -E '/${BOARD_IP}/d' ~/.ssh/known_hosts
 	./send2board root@${BOARD_IP}:/home/root/
 

@@ -39,7 +39,7 @@ update_compile_order -fileset sources_1
 #exec compile.sh
 #exec elaborate.sh
 #cd ../../../../..
-ipx::package_project -root_dir ../iprepo/${IPNAME} -vendor user.org -library user -taxonomy /UserIP -generated_files -import_files
+ipx::package_project -root_dir ../iprepo/${IPNAME} -vendor user.org -library user -taxonomy /UserIP -import_files
 set_property core_revision 1 [ipx::current_core]
 ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
