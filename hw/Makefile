@@ -4,8 +4,6 @@ IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 #ROOTFS=/proj/xbuilds/2020.1_daily_latest/internal_platforms/sw/versal/xilinx-versal-common-v2020.1/rootfs.ext4
 #IMAGE=/proj/xbuilds/2020.1_daily_latest/internal_platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 
-XPFM := ../build_linux/vck190_linux/images/linux
-
 
 .PHONY:clean bf_ifft_hw.xclbin boot_linux boot_barem
 
@@ -66,8 +64,6 @@ xclbin_w_aie:
 
 
 package_dut:
-	cp $(XPFM)/BOOT.BIN ./
-	cp $(XPFM)/image.ub ./
 	rm -rf package package.zip
 	mkdir -p package/Work/aie
 	./create_work.sh
