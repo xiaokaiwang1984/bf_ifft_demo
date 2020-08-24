@@ -334,6 +334,17 @@ void* init_buff (unsigned int addr_base) {
 	return mem;
 }
 
+void* reset_aie_through_reg () {
+	pmem_wr(0xf70a000c,0xf9e8d7c6);
+	pmem_wr(0xf70a0000,0x4000000);
+	pmem_wr(0xf70a0004,0x4000000);
+
+	pmem_wr(0xf70a0000,0x4000000);
+	pmem_wr(0xf70a0004,0x00000000);
+	
+	return 0;
+}
+
 
 int main(int argc, char ** argv) {
 	int data_lgth_32b;
@@ -341,46 +352,47 @@ int main(int argc, char ** argv) {
 	unsigned int * ddr_buff1 = (unsigned int *)init_buff(0x40000000);
 	unsigned int * ddr_buff2 = (unsigned int *)init_buff(0x41000000);
 
-#ifdef XRT_LD_AIE	
-	//####AIE reset and loading##############
-	auto dhdl = xclOpen(0, nullptr, XCL_QUIET);
-//	auto dhdl = xclOpen(0, nullptr, XCL_INFO);
 
-	printf("aie.12_0 :0x%x\n\r",pmem_rd(0x20006072004ull));
-	xrtResetAIEArray(dhdl);						//RESET aie
 
-	
-	printf("aie has been reseted by xrt......\n\r");
-	printf("aie.12_0 :0x%x\n\r",pmem_rd(0x20006072004ull));
-//	printf("aie.13_0 :0x%x\n\r",pmem_rd(0x20006872004ull));
-//	printf("aie.14_0 :0x%x\n\r",pmem_rd(0x20007072004ull));
-//	printf("aie.15_0 :0x%x\n\r",pmem_rd(0x20007872004ull));
-	
-	auto xclbin = load_xclbin(dhdl, argv[1]);	//loading AIE image from xclbin
-	
-	printf("aie has been reloaded......\n\r");
-
-	printf("aie.12_0 :0x%x\n\r",pmem_rd(0x20006072004ull));
-
-//	printf("aie.13_0 :0x%x\n\r",pmem_rd(0x20006872004ull));
-//	printf("aie.14_0 :0x%x\n\r",pmem_rd(0x20007072004ull));
-//	printf("aie.15_0 :0x%x\n\r",pmem_rd(0x20007872004ull));
-
-#endif
-
-#ifdef DUT_LD_AIE
+	printf("aie status before initilization...\n");
 	printf("aie.12_0 control:0x%x\n\r",pmem_rd(0x20006072000ull));
 	printf("aie.12_0 status :0x%x\n\r",pmem_rd(0x20006072004ull));
-	printf("aie initilization by dut.init()...\n");
+
+	#ifdef DUT_LD_AIE
+	
+	printf("AIE itilization through Graphy.init()...\n");
+	reset_aie_through_reg();
+	
 	dut.init();
+	
+	#elif XRT_LD_AIE
+	
+	printf("AIE itilization through XRT...\n");
+	auto dhdl = xclOpen(0, nullptr, XCL_QUIET);
+	xrtResetAIEArray(dhdl);	
+	
+	#endif
+	
+	printf("aie status after initilization ...\n");
 	printf("aie.12_0 control:0x%x\n\r",pmem_rd(0x20006072000ull));
 	printf("aie.12_0 status :0x%x\n\r",pmem_rd(0x20006072004ull));
 	
-	printf("aie running...\n");
+	#ifdef DUT_LD_AIE
+	
+	printf("AIE itilization through Graphy.run()...\n");
 	dut.run();
+	
+	#elif XRT_LD_AIE
+	
+	printf("AIE reloading through XRT...\n");
+	auto xclbin = load_xclbin(dhdl, argv[1]);	//loading AIE image from xclbin	
+	
+	#endif
+	
+	printf("aie status after reloading...\n");
 	printf("aie.12_0 control:0x%x\n\r",pmem_rd(0x20006072000ull));
 	printf("aie.12_0 status :0x%x\n\r",pmem_rd(0x20006072004ull));
-#endif	
+
 
 	//####AIE reset and loading##############
 	
