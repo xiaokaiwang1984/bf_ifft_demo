@@ -2,7 +2,7 @@ set project "bf_ifft_plat"
 set proj_dir "."
 
 #----------------------------------------------------------------------------------------
-set_param bd.generateHybridSystemC true
+#set_param bd.generateHybridSystemC true
 
 #----------------------------------------------------------------------------------------
 #VIVADO IPI project settings & BD creation
@@ -22,18 +22,27 @@ source ./pfm.tcl
 add_files -fileset constrs_1 -norecurse ./xdc/vck190_loc.xdc
 add_files -fileset constrs_1 -norecurse ./xdc/ddr.xdc
 add_files -fileset constrs_1 -norecurse ./xdc/timing.xdc
-#add_files -fileset constrs_1 -norecurse ./xdc/aieshim_loc_constraints_mod.xdc
 add_files -fileset constrs_1 -norecurse ./xdc/design_1_wrapper_debug.xdc
 
 make_wrapper -files [get_files ${proj_dir}/${project}/${project}.srcs/sources_1/bd/design_1/design_1.bd] -top
 add_files -norecurse ${proj_dir}/${project}/${project}.srcs/sources_1/bd/design_1/hdl/design_1_wrapper.v
 update_compile_order -fileset sources_1
 update_compile_order -fileset constrs_1
+
 #----------------------------------------------------------------------------------------
 
-import_files -fileset utils_1 -norecurse ./waive_BLI_AIE_timing_violations_postplace.tcl
+#import_files -fileset utils_1 -norecurse ./waive_BLI_AIE_timing_violations_postplace.tcl
+#set_property platform.run.steps.place_design.tcl.post [get_files waive_BLI_AIE_timing_violations_postplace.tcl] [current_project]
 
-set_property platform.run.steps.place_design.tcl.post [get_files waive_BLI_AIE_timing_violations_postplace.tcl] [current_project]
+import_files -fileset utils_1 -norecurse ./qor_scripts/pre_place.tcl
+import_files -fileset utils_1 -norecurse ./qor_scripts/post_place.tcl
+import_files -fileset utils_1 -norecurse ./qor_scripts/post_route.tcl
+import_files -fileset utils_1 -norecurse ./qor_scripts/post_physopt.tcl
+
+set_property platform.run.steps.place_design.tcl.pre [get_files pre_place.tcl] [current_project]
+set_property platform.run.steps.place_design.tcl.post [get_files post_place.tcl] [current_project]
+set_property platform.run.steps.route_design.tcl.post [get_files post_route.tcl] [current_project]
+set_property platform.run.steps.phys_opt_design.tcl.post [get_files post_physopt.tcl] [current_project]
 
 #examples
 #set_property platform.run.steps.place_design.tcl.post [get_files post_place.tcl] [current_project]

@@ -32,13 +32,13 @@ hw_emu:
 	make -C hw_emu
 	
 xclbin:
-	make xclbin -C hw
+	make -C hw xclbin
 	
 boot_barem:
-	make boot_barem -C hw
+	make -C hw boot_barem 
 	
 boot_linux:
-	make boot_linux -C hw
+	make -C hw boot_linux 
 	
 
 
