@@ -4,31 +4,27 @@
 #ROOTFS=/proj/xbuilds/2020.1_daily_latest/internal_platforms/sw/versal/xilinx-versal-common-v2020.1/rootfs.ext4
 #IMAGE=/proj/xbuilds/2020.1_daily_latest/internal_platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 
-
+PFM_VER = v1_0
 
 .PHONY:clean sim pack
 
 all:bf_ifft.xclbin pack sim
 
 
-pdi:
-	v++ -l -t hw_emu ../src_aie/libsdf.a -o bf_ifft.xclbin --save-temps -g \
-	--user_ip_repo_paths ../IPs/iprepo \
-	--platform ../platform/bf_ifft_v1_0.xpfm \
-	--config ./system.cfg \
+
 	
 
-bf_ifft.xclbin:
+bf_ifft.xclbin:../platform/${PFM_VER}/bf_ifft_${PFM_VER}.xpfm system.cfg 
 	v++ -l -t hw_emu ../src_aie/libsdf.a -o bf_ifft.xclbin --save-temps -g \
 	--user_ip_repo_paths ../IPs/iprepo \
-	--platform ../platform/bf_ifft_v1_0.xpfm \
+	--platform ../platform/${PFM_VER}/bf_ifft_${PFM_VER}.xpfm \
 	--config ./system.cfg \
 
 
 	
 pack:bf_ifft.xclbin
 	v++ -p -t hw_emu  bf_ifft.xclbin ../src_aie/libsdf.a \
-	-f ../platform/bf_ifft_v1_0.xpfm \
+	-f ../platform/${PFM_VER}/bf_ifft_${PFM_VER}.xpfm \
 	--package.out_dir ./ \
 	--package.domain aiengine \
 	--package.boot_mode sd \

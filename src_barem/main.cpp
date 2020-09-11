@@ -193,7 +193,11 @@ int main()
 	dut.init();
 	dut.run() ;
 
-
+	//remove iolation reset with revertor
+	printf("Releasing PL reset signal\n");
+	Xil_Out32(0xF1260330, 0xf);
+	Xil_Out32(0xF1260330, 0x0);
+	
 
 	printf("Releasing reset\n");
 	Xil_Out32(XPAR_GPIO_0_BASEADDR , 0x1);

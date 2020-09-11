@@ -4,10 +4,11 @@ IMAGE=/opt/xilinx/platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 #ROOTFS=/proj/xbuilds/2020.1_daily_latest/internal_platforms/sw/versal/xilinx-versal-common-v2020.1/rootfs.ext4
 #IMAGE=/proj/xbuilds/2020.1_daily_latest/internal_platforms/sw/versal/xilinx-versal-common-v2020.1/Image
 
+PFM_VER = v1_0
 
 .PHONY:clean bf_ifft_hw.xclbin boot_linux boot_barem
 
-xclbin:bf_ifft_hw.xclbin
+xclbin:bf_ifft_hw_${PFM_VER}.xclbin
 
 ##--to_step=vpl.update_bd
 ##--to_step vpl.impl.opt_design
@@ -15,16 +16,16 @@ xclbin:bf_ifft_hw.xclbin
 #-R2 generate DCPs
 ##--reuse_impl ./_x/link/vivado/route4.dcp
 
-bf_ifft_hw.xclbin:../platform/bf_ifft_v1_0.xpfm ../src_aie/libsdf.a system.cfg ./axi4s_regslice_64b.xo
-	v++ -l -t hw ../src_aie/libsdf.a -o bf_ifft_hw.xclbin ./axi4s_regslice_64b.xo --save-temps -g \
+bf_ifft_hw_${PFM_VER}.xclbin:../platform/${PFM_VER}/bf_ifft_${PFM_VER}.xpfm ../src_aie/libsdf.a system.cfg ./axi4s_regslice_64b.xo
+	v++ -l -t hw ../src_aie/libsdf.a -o bf_ifft_hw_${PFM_VER}.xclbin ./axi4s_regslice_64b.xo --save-temps -g \
 	-R2 \
 	--user_ip_repo_paths ../IPs/iprepo \
-	--platform ../platform/bf_ifft_v1_0.xpfm \
+	--platform ../platform/${PFM_VER}/bf_ifft_${PFM_VER}.xpfm \
 	--config ./system.cfg \
 	
 boot_barem:
-	v++ -p -t hw bf_ifft_hw.xclbin ../src_aie/libsdf.a \
-	-f ../platform/bf_ifft_v1_0.xpfm \
+	v++ -p -t hw bf_ifft_hw_${PFM_VER}.xclbin ../src_aie/libsdf.a \
+	-f ../platform/${PFM_VER}/bf_ifft_${PFM_VER}.xpfm \
 	--package.out_dir ./boot_barem \
 	--package.domain aiengine \
 	--package.boot_mode sd \
@@ -32,8 +33,8 @@ boot_barem:
 	--package.ps_elf ../src_barem/main.elf,a72-0
 	
 boot_wo_barem:
-	v++ -p -t hw bf_ifft_hw.xclbin ../src_aie/libsdf.a \
-	-f ../platform/bf_ifft_v1_0.xpfm \
+	v++ -p -t hw bf_ifft_hw_${PFM_VER}.xclbin ../src_aie/libsdf.a \
+	-f ../platform/${PFM_VER}/bf_ifft_${PFM_VER}.xpfm \
 	--package.out_dir ./boot_barem \
 	--package.domain aiengine \
 	--package.boot_mode sd \
@@ -43,8 +44,8 @@ boot_wo_barem:
 
 boot_linux:xclbin_w_aie package_dut
 	tar zcvf app.tgz aie_only.xclbin ../src_linux/bf_ifft_test_xrt.exe ../src_linux/data
-	v++ -p -t hw bf_ifft_hw.xclbin ../src_aie/libsdf.a \
-	-f ../platform/bf_ifft_v1_0.xpfm \
+	v++ -p -t hw bf_ifft_hw_${PFM_VER}.xclbin ../src_aie/libsdf.a \
+	-f ../platform/${PFM_VER}/bf_ifft_${PFM_VER}.xpfm \
 	--package.out_dir ./boot_linux \
 	--package.rootfs ../build_linux/vck190_linux/images/linux/rootfs.cpio.gz.u-boot \
 	--package.kernel_image ../build_linux/vck190_linux/images/linux/Image \
@@ -57,7 +58,7 @@ boot_linux:xclbin_w_aie package_dut
 	
 xclbin_w_aie:
 	v++ -s -p -t hw ../src_aie/libsdf.a \
-	-f ../platform/bf_ifft_v1_0.xpfm \
+	-f ../platform/${PFM_VER}/bf_ifft_${PFM_VER}.xpfm \
 	--package.out_dir  ./ \
 	--config package.cfg
 	mv a.xclbin aie_only.xclbin
@@ -74,5 +75,5 @@ package_dut:
 	
 
 clean:
-	rm -rf *xclbin* *.log BOOT* *.xsa *.bin _x sd_card sim emu_qemu_scripts libsdf boot_* launch* qemu_* hw.* pmc_* sd_* v++* *.ltx vivado* .Xil app.tgz 
+	rm -rf *xclbin* *.log BOOT* *.xsa *.bin _x sd_card sim emu_qemu_scripts libsdf boot_* launch* qemu_* hw.* pmc_* sd_* v++* *.ltx vivado* .Xil app.tgz package.zip package
 

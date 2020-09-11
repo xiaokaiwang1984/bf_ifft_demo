@@ -9,6 +9,7 @@
 #endif
 
 
+
 using namespace std ;
 
 
@@ -158,20 +159,20 @@ unsigned int pmem_rd (unsigned long long address ){
 }
 
 int tx_dma (int dma_lgth) {
-	pmem_wr(XPAR_AXI_DMA_0_BASEADDR,1);					//enable
-	pmem_wr(XPAR_AXI_DMA_0_BASEADDR + 0x18,0x40000000); //ddr address
-	pmem_wr(XPAR_AXI_DMA_0_BASEADDR + 0x1c,0);			//ddr address msb
-	pmem_wr(XPAR_AXI_DMA_0_BASEADDR + 0x28,dma_lgth);	//ddr address msb
+	pmem_wr(XPAR_AXIDMA_0_BASEADDR,1);					//enable
+	pmem_wr(XPAR_AXIDMA_0_BASEADDR + 0x18,0x40000000); //ddr address
+	pmem_wr(XPAR_AXIDMA_0_BASEADDR + 0x1c,0);			//ddr address msb
+	pmem_wr(XPAR_AXIDMA_0_BASEADDR + 0x28,dma_lgth);	//ddr address msb
 
 	return 0;
 }
 
 
 int rx_dma (int dma_lgth) {
-	pmem_wr(XPAR_AXI_DMA_2_BASEADDR + 0x30,1);			//enable
-	pmem_wr(XPAR_AXI_DMA_2_BASEADDR + 0x48,0x40000000); //ddr address
-	pmem_wr(XPAR_AXI_DMA_2_BASEADDR + 0x4c,0);			//ddr address msb
-	pmem_wr(XPAR_AXI_DMA_2_BASEADDR + 0x58,dma_lgth);	//ddr address msb
+	pmem_wr(XPAR_AXIDMA_2_BASEADDR + 0x30,1);			//enable
+	pmem_wr(XPAR_AXIDMA_2_BASEADDR + 0x48,0x40000000); //ddr address
+	pmem_wr(XPAR_AXIDMA_2_BASEADDR + 0x4c,0);			//ddr address msb
+	pmem_wr(XPAR_AXIDMA_2_BASEADDR + 0x58,dma_lgth);	//ddr address msb
 
 	pmem_wr(XPAR_GPIO_0_BASEADDR,0x5); //start rx_dma
 	return 0;
@@ -318,8 +319,8 @@ void initialize ( ) {
 	pmem_wr(XPAR_GPIO_0_BASEADDR,0x1);
 	
 	//reset DMA
-	pmem_wr(XPAR_AXI_DMA_0_BASEADDR,0x4);
-	pmem_wr(XPAR_AXI_DMA_2_BASEADDR + 0x30 ,0x4);
+	pmem_wr(XPAR_AXIDMA_0_BASEADDR,0x4);
+	pmem_wr(XPAR_AXIDMA_2_BASEADDR + 0x30 ,0x4);
 }
 
 

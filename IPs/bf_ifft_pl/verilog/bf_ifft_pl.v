@@ -32,7 +32,7 @@ module bf_ifft_pl
  output wire [63:0]	m_axi_dma_tdat,
 
  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 clk_aie CLK" *)
- (* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF din0:din1:din2:din3:cin0:cin1:cin2:cin3:bfo:ifia:ifib:ifoa:ifob" *)
+ (* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF din0:din1:din2:din3:cin0:cin1:cin2:cin3:bfo:ifia:ifib:ifoa:ifob,ASSOCIATED_RESET resetn_aie" *)
  input wire         clk,
  //BF stimulas
  (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 din0 TREADY" *)
@@ -131,6 +131,9 @@ module bf_ifft_pl
  (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ifob TDATA" *)
  input  wire [63:0] ifob_axi_tdat,
 
+(* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 resetn_aie RST" *)
+(* X_INTERFACE_PARAMETER = "POLARITY ACTIVE_LOW" *)
+ input resetn_aie,
  ////////////////////////////////////////
  //Chip Scope of FFT output
  ////////////////////////////////////////

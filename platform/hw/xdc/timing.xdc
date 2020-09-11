@@ -31,17 +31,17 @@ set_property BLI TRUE [get_cells -filter REF_NAME=~FD* -of [get_pins -leaf -of [
 
 set_max_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] 100
 set_min_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] -100
-set_max_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_out1]] 100
-set_min_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_out1]] -100
+set_max_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] -to [get_clocks -of_objects [get_pins design_1_i/versal_cips_0/inst/PS9_inst/PMCRCLKCLK[0]]] 100
+set_min_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] -to [get_clocks -of_objects [get_pins design_1_i/versal_cips_0/inst/PS9_inst/PMCRCLKCLK[0]]] -100
 
 set_max_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] 100
 set_min_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] -100
-set_max_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_out1]] 100
-set_min_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_out1]] -100
+set_max_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] -to [get_clocks -of_objects [get_pins design_1_i/versal_cips_0/inst/PS9_inst/PMCRCLKCLK[0]]] 100
+set_min_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] -to [get_clocks -of_objects [get_pins design_1_i/versal_cips_0/inst/PS9_inst/PMCRCLKCLK[0]]] -100
 
-set_max_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_out1]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] 100
-set_min_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_out1]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] -100
-set_max_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_out1]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] 100
-set_min_delay -from [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_out1]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] -100
+set_max_delay -from [get_clocks -of_objects [get_pins design_1_i/versal_cips_0/inst/PS9_inst/PMCRCLKCLK[0]]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] 100
+set_min_delay -from [get_clocks -of_objects [get_pins design_1_i/versal_cips_0/inst/PS9_inst/PMCRCLKCLK[0]]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_aie_pl]] -100
+set_max_delay -from [get_clocks -of_objects [get_pins design_1_i/versal_cips_0/inst/PS9_inst/PMCRCLKCLK[0]]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] 100
+set_min_delay -from [get_clocks -of_objects [get_pins design_1_i/versal_cips_0/inst/PS9_inst/PMCRCLKCLK[0]]] -to [get_clocks -of_objects [get_pins design_1_i/clk_wizard_0/clk_ila]] -100
 
 

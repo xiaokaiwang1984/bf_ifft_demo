@@ -1,11 +1,12 @@
-PETALINUX_DIR := vck190_linux
+PETALINUX_DIR 	:= vck190_linux
+PFM_VER 		= v1_0
 
 .PHONY: all clean copy_xsa petalinux
 
 all: copy_xsa petalinux
 
 copy_xsa:
-	cp -f ../hw/bf_ifft_hw.xsa ./
+	cp -f ../hw/bf_ifft_hw_${PFM_VER}.xsa ./
 	
 petalinux:vck190_linux/images
 	

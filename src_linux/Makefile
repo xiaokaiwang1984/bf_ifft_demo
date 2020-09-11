@@ -2,14 +2,14 @@
 #			 Makefile used for AIE linux application 
 #				 
 # #########################################################################
-
+PFM_VER 		= v1_0
 
 
 BOARD_IP		:=192.168.1.10
 CC				:= aarch64-linux-gnu-g++
 AIE_APP			:= bf_ifft_test.cpp 
 AIE_APP_CTRL	:=../src_aie/Work/ps/c_rts/aie_control.cpp
-PLAT_INC		:=../platform/sw/bf_ifft_v1_0/standalone_domain/bspinclude/include
+PLAT_INC		:=../platform/${PFM_VER}/sw/bf_ifft_${PFM_VER}/standalone_domain/bspinclude/include
 CFLAGS			:= -O3 -DPS_INIT_AIE -DXAIE_DEBUG
 
 
@@ -33,7 +33,7 @@ AIE_KERNELS		:= $(AIE_DIR)/kernels
 all:bf_ifft_test_xrt.exe bf_ifft_test_dut.exe
 
 bf_ifft_test_xrt.exe:bf_ifft_test.cpp
-	$(CC)  -DXRT_LD_AIE $(CFLAGS) -I$(PLAT_INC) $(AIE_APP) -o bf_ifft_test_xrt.exe \
+	$(CC) -DXRT_LD_AIE $(CFLAGS) -I$(PLAT_INC) $(AIE_APP) -o bf_ifft_test_xrt.exe \
 	--sysroot=$(PFM_SYSROOT) -I$(SYSROOT_INCLUDE) -I$(CARDANO_ROOT)/include/ -I$(AIE_INCLUDE) -I$(XRT_INCLUDE) \
 	-Xlinker -rpath-link=$(PFM_SYSROOT)	-L$(PFM_SYSROOT)/../ -L$(AIE_LINKER) \
 	-lxaiengine -lmetal -lopen_amp -lsysfs -lxrt_coreutil -lxrt_core -Wl,-rpath,$(LIB),--warn-unresolved-symbol
